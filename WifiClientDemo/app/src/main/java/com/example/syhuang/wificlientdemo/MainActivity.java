@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int DEVICE_CONNECTED  = 2;//有设备连上热点
     public static final int SEND_MSG_SUCCSEE  = 3;//发送消息成功
     public static final int SEND_MSG_ERROR    = 4;//发送消息失败
-    public static final int GET_MSG           = 6;//获取新消息
+    public static final int GET_MSG            = 6;//获取新消息
 
     private TextView      text_state;
     /**
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 端口号
      */
-    private static final int    PORT              = 54321;
+    private static final int    PORT              = 8000;
     private WifiManager wifiManager;
 
     private TextView status_init;
@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.fileButton).setOnClickListener(this);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        //检查Wifi状态
-        if (!wifiManager.isWifiEnabled())
-            wifiManager.setWifiEnabled(true);
         text_state = (TextView) findViewById(R.id.status_info);
         status_init = (TextView) findViewById(R.id.status_init);
 
@@ -89,29 +86,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //        initBroadcastReceiver();
         //        开启连接线程
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Socket socket = new Socket(getWifiRouteIPAddress(MainActivity.this), PORT);
-                    connectThread = new ConnectThread(socket, handler);
-                    connectThread.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            text_state.setText("通信连接失败");
-                        }
-                    });
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Socket socket = new Socket(getWifiRouteIPAddress(MainActivity.this), PORT);
+//                    connectThread = new ConnectThread(socket, handler);
+//                    connectThread.start();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            text_state.setText("通信连接失败");
+//                        }
+//                    });
+//
+//                }
+//            }
+//        }).start();
 
-                }
-            }
-        }).start();
 
-
-        listenerThread = new ListenerThread(PORT, handler);
-        listenerThread.start();
+//        listenerThread = new ListenerThread(PORT, handler);
+//        listenerThread.start();
     }
 
     /**
@@ -192,13 +189,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
 
             case R.id.fileButton:
-                /**
-                 * 相册
-                 */
-                //                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                //                intent.setType("image/*");
-                //                startActivityForResult(intent, CHOOSE_FILE_RESULT_CODE);
-                /**文件库*/
                 // This always works
                 Intent i = new Intent(MainActivity.this, FilePickerActivity.class);
                 // This works if you defined the intent filter
@@ -231,29 +221,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         + "\n路由：" + getWifiRouteIPAddress(MainActivity.this));
 
 
-                //                //        initBroadcastReceiver();
-                //                //        开启连接线程
-                //                new Thread(new Runnable() {
-                //                    @Override
-                //                    public void run() {
-                //                        try {
-                //                            Socket socket = new Socket(getRouterIp(), PORT);
-                //                            connectThread = new ConnectThread(socket, handler);
-                //                            connectThread.start();
-                //                        } catch (IOException e) {
-                //                            e.printStackTrace();
-                //                            runOnUiThread(new Runnable() {
-                //                                @Override
-                //                                public void run() {
-                //                                    text_state.setText("通信连接失败");
-                //                                }
-                //                            });
-                //
-                //                        }
-                //                    }
-                //                }).start();
-                //                listenerThread = new ListenerThread(PORT, handler);
-                //                listenerThread.start();
+                                //        initBroadcastReceiver();
+                                //        开启连接线程
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Socket socket = new Socket(getRouterIp(), PORT);
+                                            connectThread = new ConnectThread(socket, handler);
+                                            connectThread.start();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    text_state.setText("通信连接失败");
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                }).start();
+                                listenerThread = new ListenerThread(PORT, handler);
+                                listenerThread.start();
                 break;
         }
     }

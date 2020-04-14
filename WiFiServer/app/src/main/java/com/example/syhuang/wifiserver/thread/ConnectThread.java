@@ -130,6 +130,33 @@ public class ConnectThread extends Thread {
     }
 
     /**
+     * 发送数据
+     */
+    public void sendData(String msg) {
+        Log.i("ConnectThread", "发送数据:" + (outputStream == null));
+        if (outputStream != null) {
+            try {
+                outputStream.write(msg.getBytes());
+                Log.i("ConnectThread", "发送消息：" + msg);
+                Message message = Message.obtain();
+                message.what = MainActivity.SEND_MSG_SUCCSEE;
+                Bundle bundle = new Bundle();
+                bundle.putString("MSG", new String(msg));
+                message.setData(bundle);
+                handler.sendMessage(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Message message = Message.obtain();
+                message.what = MainActivity.SEND_MSG_ERROR;
+                Bundle bundle = new Bundle();
+                bundle.putString("MSG", new String(msg));
+                message.setData(bundle);
+                handler.sendMessage(message);
+            }
+        }
+    }
+
+    /**
      * 格式化文件大小
      *
      * @param length
@@ -169,31 +196,5 @@ public class ConnectThread extends Thread {
         return true;
     }
 
-    /**
-     * 发送数据
-     */
-    public void sendData(String msg) {
-        Log.i("ConnectThread", "发送数据:" + (outputStream == null));
-        if (outputStream != null) {
-            try {
-                outputStream.write(msg.getBytes());
-                Log.i("ConnectThread", "发送消息：" + msg);
-                Message message = Message.obtain();
-                message.what = MainActivity.SEND_MSG_SUCCSEE;
-                Bundle bundle = new Bundle();
-                bundle.putString("MSG", new String(msg));
-                message.setData(bundle);
-                handler.sendMessage(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Message message = Message.obtain();
-                message.what = MainActivity.SEND_MSG_ERROR;
-                Bundle bundle = new Bundle();
-                bundle.putString("MSG", new String(msg));
-                message.setData(bundle);
-                handler.sendMessage(message);
-            }
-        }
-    }
 
 }
