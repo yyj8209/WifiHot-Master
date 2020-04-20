@@ -80,9 +80,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         status_init = (TextView) findViewById(R.id.status_init);
 
 
-        status_init.setText("已连接到：" + wifiManager.getConnectionInfo().getSSID() +
-                "\nIP:" + getIp()
-                + "\n路由：" + getWifiRouteIPAddress(MainActivity.this));
+//        status_init.setText("已连接到：" + wifiManager.getConnectionInfo().getSSID() +
+//                "\nIP:" + getIp()
+//                + "\n路由：" + getWifiRouteIPAddress(MainActivity.this));
 
         //        initBroadcastReceiver();
         //        开启连接线程
@@ -209,6 +209,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.send:
+                //        initBroadcastReceiver();
+                //        开启连接线程
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Socket socket = new Socket(getRouterIp(), PORT);
+                            connectThread = new ConnectThread(socket, handler);
+                            connectThread.start();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    text_state.setText("通信连接失败");
+                                }
+                            });
+
+                        }
+                    }
+                }).start();
                 if (connectThread != null) {
                     connectThread.sendData("这是来自Wifi-client热点的消息");
                 } else {
@@ -221,27 +242,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         + "\n路由：" + getWifiRouteIPAddress(MainActivity.this));
 
 
-                                //        initBroadcastReceiver();
-                                //        开启连接线程
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            Socket socket = new Socket(getRouterIp(), PORT);
-                                            connectThread = new ConnectThread(socket, handler);
-                                            connectThread.start();
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    text_state.setText("通信连接失败");
-                                                }
-                                            });
-
-                                        }
-                                    }
-                                }).start();
                                 listenerThread = new ListenerThread(PORT, handler);
                                 listenerThread.start();
                 break;

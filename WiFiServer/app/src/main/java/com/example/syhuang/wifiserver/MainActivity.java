@@ -72,37 +72,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //        开启连接线程
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.d("ip", "+++onCreat:getWifiApIpAddress()" + getWifiApIpAddress());
-                    //本地路由开启通信
-                    String ip = getWifiApIpAddress();
-                    if (ip != null) {
-                    } else {
-                        ip = "192.168.43.1";
-                        Log.d("ip", "+++ 192.168.43.1");
-                    }
-                    Socket socket = new Socket(ip, PORT);
-                    connectThread = new ConnectThread(MainActivity.this, socket, handler);
-                    connectThread.start();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            text_state.setText("创建通信失败");
-                        }
-                    });
-
-                }
-            }
-        }).start();
-
-
     }
 
     //    /**
@@ -134,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.create_server:
                 //TODO implement
-                createWifiHotspot();
+                startServer();
                 break;
             case R.id.close_server:
                 //TODO implement
@@ -197,12 +166,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //    版权声明：本文为CSDN博主「dingpwen」的原创文章，遵循CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
 //    原文链接：https://blog.csdn.net/dingpwen/article/details/105071698
     /**
-     * 创建Wifi热点
+     * 打开服务器
      */
-    private void createWifiHotspot() {
+    private void startServer() {
 
         //192.168.43.59
-                Log.d("ip", "+++createWifiHotspot:getWifiApIpAddress()" + getWifiApIpAddress() +
+                Log.d("ip", "+++startServer:getWifiApIpAddress()" + getWifiApIpAddress() +
                         "\n");
         try {
                 //        开启连接线程
@@ -210,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         try {
-                            Log.d("ip", "+++createWifiHotspot-run:getWifiApIpAddress()" + getWifiApIpAddress()
+                            Log.d("ip", "+++startServer-run:getWifiApIpAddress()" + getWifiApIpAddress()
                             );
                             String ip = getWifiApIpAddress();
                             if (ip != null) {
@@ -238,11 +207,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }).start();
                 Thread.sleep(1000);
 
-                //                listenerThread = new ListenerThread(PORT, handler);
-                //                listenerThread.start();
+//            //        开启连接线程
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        Log.d("ip", "+++onCreat:getWifiApIpAddress()" + getWifiApIpAddress());
+//                        //本地路由开启通信
+//                        String ip = getWifiApIpAddress();
+//                        if (ip != null) {
+//                        } else {
+//                            ip = "192.168.43.1";
+//                            Log.d("ip", "+++ 192.168.43.1");
+//                        }
+//                        Socket socket = new Socket(ip, PORT);
+//                        connectThread = new ConnectThread(MainActivity.this, socket, handler);
+//                        connectThread.start();
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                text_state.setText("创建通信失败");
+//                            }
+//                        });
+//
+//                    }
+//                }
+//            }).start();
+
+            listenerThread = new ListenerThread(PORT, handler);
+            listenerThread.start();
         } catch (Exception e) {
             e.printStackTrace();
-            text_state.setText("创建热点失败");
+            text_state.setText("打开服务器失败");
         }
     }
 
