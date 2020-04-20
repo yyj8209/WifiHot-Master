@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -43,6 +44,8 @@ public class MainActivity extends Activity {
     public int ClientCode = 0;
     public String CurrentClient;
 
+    public TextView textView[] = new TextView[4];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,11 @@ public class MainActivity extends Activity {
 
         startButton.setOnClickListener(startButtonListener);
         sendButton.setOnClickListener(sendButtonListener);
+
+        textView[0] = findViewById(R.id.receive_TextView1);
+        textView[1] = findViewById(R.id.receive_TextView2);
+        textView[2] = findViewById(R.id.receive_TextView3);
+        textView[3] = findViewById(R.id.receive_TextView4);
     }
     /**
      * 启动服务按钮监听事件
@@ -107,6 +115,12 @@ public class MainActivity extends Activity {
                     CurrentClient = getClientIpAddress(clicksSocket);
                     Client[ClientCode].concat(CurrentClient);
                     ClientCode ++;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            receiveEditText.setText("新的用户接入："+Client[ClientCode-1]);
+                        }
+                    });
 //                    Toast.makeText(getApplicationContext(),ClientCode+CurrentClient,Toast.LENGTH_LONG);
                     //启动接收线程
                     Receive_Thread receive_Thread = new Receive_Thread(ClientCode);
@@ -143,7 +157,7 @@ public class MainActivity extends Activity {
                     {
                         public void run()
                         {
-                            receiveEditText.setText(new String(buf,0,len)+"线程"+clientCode);
+                            textView[clientCode-1].setText(new String(buf,0,len)+"线程"+clientCode);
                         }
                     });
                 }
