@@ -36,9 +36,7 @@ public class ConnectThread extends Thread {
 
     @Override
     public void run() {
-/*        if(activeConnect){
-//            socket.c
-        }*/
+
         if (socket == null) {
             return;
         }

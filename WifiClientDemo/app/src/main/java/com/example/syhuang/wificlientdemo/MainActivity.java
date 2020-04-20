@@ -168,16 +168,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private static String getWifiRouteIPAddress(Context context) {
         WifiManager wifi_service = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo dhcpInfo = wifi_service.getDhcpInfo();
-        //        WifiInfo wifiinfo = wifi_service.getConnectionInfo();
-        //        System.out.println("Wifi info----->" + wifiinfo.getIpAddress());
-        //        System.out.println("DHCP info gateway----->" + Formatter.formatIpAddress(dhcpInfo.gateway));
-        //        System.out.println("DHCP info netmask----->" + Formatter.formatIpAddress(dhcpInfo.netmask));
-        //DhcpInfo中的ipAddress是一个int型的变量，通过Formatter将其转化为字符串IP地址
-        String routeIp = Formatter.formatIpAddress(dhcpInfo.gateway);
-        Log.i("route ip", "wifi route ip：" + routeIp);
+        WifiInfo wifiInfo = wifi_service.getConnectionInfo();
 
-        return routeIp;
+        int ipAddress = wifiInfo.getIpAddress();
+
+        //返回整型地址转换成“*.*.*.*”地址
+        return String.format("%d.%d.%d.%d",
+                (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
+                (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+
     }
 
     int CHOOSE_FILE_RESULT_CODE = 1001;

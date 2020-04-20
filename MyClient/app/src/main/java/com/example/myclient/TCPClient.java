@@ -225,6 +225,7 @@ public class TCPClient {
                 case 100:
                     Bundle bundle = msg.getData();
                     byte[] buffer = bundle.getByteArray("data");
+                    
                     int size = bundle.getInt("size");
                     int mequestCode = bundle.getInt("requestCode");
                     if (null != onDataReceiveListener) {

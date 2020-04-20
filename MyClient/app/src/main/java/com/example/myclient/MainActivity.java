@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] data = new byte[size];
             System.arraycopy(buffer, 0, data, 0, size);
 
-            final String oxValue = String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
+            final String oxValue = data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
             Log.i(TAG,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
 
             tv_receive.setText(tv_receive.getText().toString() + oxValue + "\n");
