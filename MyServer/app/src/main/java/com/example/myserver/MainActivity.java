@@ -10,6 +10,8 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.app.Activity;
 import android.content.SharedPreferences.Editor;
@@ -29,8 +31,13 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+    public static final int MAXCLIENT = 8;
+
+    private static final String TAG = "MainActivity";
     ServerSocket serverSocket;//创建ServerSocket对象
     Socket clicksSocket;//连接通道，创建Socket对象
+    ExecutorService executorService;   // 创建线程池
+    Receive_Thread receive_Thread;
     Button startButton;//发送按钮
     EditText portEditText, ipEditText;//端口号和IP
     EditText receiveEditText;//接收消息框
@@ -39,11 +46,10 @@ public class MainActivity extends Activity {
     InputStream inputstream;//创建输入数据流
     OutputStream outputStream;//创建输出数据流
 
-    public static final int MAXCLIENT = 8;
     public static final String Client[] = {"No.1", "No.2", "No.3", "No.4", "No.5", "No.6", "No.7", "No.8"};
     public int ClientCode = 0;
     public String CurrentClient;
-
+    public boolean isStart = true;
     public TextView textView[] = new TextView[4];
 
     @Override
@@ -69,6 +75,8 @@ public class MainActivity extends Activity {
         textView[1] = findViewById(R.id.receive_TextView2);
         textView[2] = findViewById(R.id.receive_TextView3);
         textView[3] = findViewById(R.id.receive_TextView4);
+
+        executorService = Executors.newCachedThreadPool();
     }
     /**
      * 启动服务按钮监听事件
@@ -104,32 +112,54 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            while (true)
+            try
             {
-                try
+                while (isStart)
                 {
                     //监听连接 ，如果无连接就会处于阻塞状态，一直在这等着
                     clicksSocket = serverSocket.accept();
+                    clicksSocket.setSoTimeout(5000);
                     inputstream = clicksSocket.getInputStream();//
                     // 为了显示多个客户端
                     CurrentClient = getClientIpAddress(clicksSocket);
-                    Client[ClientCode].concat(CurrentClient);
+//                    Client[ClientCode].concat(CurrentClient);
                     ClientCode ++;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            receiveEditText.setText("新的用户接入："+Client[ClientCode-1]);
-                        }
-                    });
 //                    Toast.makeText(getApplicationContext(),ClientCode+CurrentClient,Toast.LENGTH_LONG);
                     //启动接收线程
-                    Receive_Thread receive_Thread = new Receive_Thread(ClientCode);
+                    receive_Thread = new Receive_Thread(ClientCode);
                     receive_Thread.start();
+
+                    if (clicksSocket.isConnected()) {
+                        executorService.execute(receive_Thread);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                receiveEditText.setText("新用户接入："+ CurrentClient);
+                            }
+                        });
+                    }
                 }
-                catch (IOException e)
-                {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                clicksSocket.close();
+            }
+            catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
+                if (serverSocket != null) {
+                    try {
+                        isStart = false;
+                        serverSocket.close();
+                        receive_Thread.interrupt();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                receiveEditText.setText("新用户log out："+ CurrentClient);
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -142,31 +172,38 @@ public class MainActivity extends Activity {
     class Receive_Thread extends Thread//继承Thread
     {
         int clientCode;
+        Receive_Thread(){};
         Receive_Thread(int ClientCode){
             this.clientCode = ClientCode;
         }
         public void run()//重写run方法
         {
-            while (true)
+            try
             {
-                try
-                {
                     final byte[] buf = new byte[1024];
                     final int len = inputstream.read(buf);
+                    Log.e(TAG,new String(buf,0,len));
                     runOnUiThread(new Runnable()
                     {
                         public void run()
                         {
-                            textView[clientCode-1].setText(new String(buf,0,len)+"线程"+clientCode);
+                            textView[clientCode-1].setText(new String(buf,0,len));
                         }
                     });
-                }
-                catch (Exception e)
-                {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
             }
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+//            finally {
+//                try {
+//                    clicksSocket.close();
+//                }
+//                catch (IOException e){
+//                    e.printStackTrace();
+//                }
+//            }
         }
     }
     /**
@@ -207,7 +244,7 @@ public class MainActivity extends Activity {
 //        return String.format("%d.%d.%d.%d",
 //                (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
 //                (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
-        return socket.getRemoteSocketAddress().toString()+"/"+socket.getInetAddress().toString();
+        return socket.getInetAddress().toString();
     }
 
 
