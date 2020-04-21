@@ -126,6 +126,7 @@ public class TCPClient {
      * */
     public void disconnect() {
         isStop = true;
+        sendStrCmds(' '+ socketThead.ip,1001);   // try sending info to exit
         try {
             if (outputStream != null) {
                 outputStream.close();

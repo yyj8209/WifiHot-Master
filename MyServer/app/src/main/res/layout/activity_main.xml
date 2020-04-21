@@ -10,6 +10,7 @@
         android:id="@+id/port_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="监听的端口：" />
     <!-- 端口号 -->
     <EditText
@@ -53,31 +54,34 @@
         />
 
     <!-- 启动按钮 -->
+    <!-- 发送按钮 -->
     <Button
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="启动服务"
-        android:layout_below="@id/message_EditText"
         android:layout_alignParentLeft="true"
-        />
-    <!-- 发送按钮 -->
+        android:layout_below="@id/message_EditText"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="1dp"
+        android:text="启动服务" />
+
+    <!-- 接收消息框 -->
     <Button
         android:id="@+id/send_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="发送消息"
-        android:layout_below="@id/message_EditText"
         android:layout_alignParentRight="true"
-        />
+        android:layout_below="@id/message_EditText"
+        android:layout_marginRight="85dp"
+        android:layout_marginTop="-1dp"
+        android:text="发送消息" />
 
-    <!-- 接收消息框 -->
     <EditText
         android:id="@+id/receive_EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/send_button"
-        android:text="新客户端"/>
+        android:text="新客户端IP"/>
 
     <GridLayout
         android:layout_width="match_parent"

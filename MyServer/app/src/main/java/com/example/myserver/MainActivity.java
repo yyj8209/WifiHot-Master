@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,8 +47,9 @@ public class MainActivity extends Activity {
     InputStream inputstream;//创建输入数据流
     OutputStream outputStream;//创建输出数据流
 
-    public static final String Client[] = {"No.1", "No.2", "No.3", "No.4", "No.5", "No.6", "No.7", "No.8"};
-    public int ClientCode = 0;
+    TreeSet<String> ClientSet;   // Set of clients(IP)
+//    public static final String Client[] = {"No.1:", "No.2:", "No.3:", "No.4:", "No.5:", "No.6:", "No.7:", "No.8:"};
+//    public int ClientCode = 0;
     public String CurrentClient;
     public boolean isStart = true;
     public TextView textView[] = new TextView[4];
@@ -77,6 +79,7 @@ public class MainActivity extends Activity {
         textView[3] = findViewById(R.id.receive_TextView4);
 
         executorService = Executors.newCachedThreadPool();
+        ClientSet = new TreeSet<String>();
     }
     /**
      * 启动服务按钮监听事件
@@ -89,7 +92,7 @@ public class MainActivity extends Activity {
             /**
              * 启动服务器监听线程
              */
-            ClientCode = 0;
+//            ClientCode = 0;
             ServerSocket_thread serversocket_thread = new ServerSocket_thread();
             serversocket_thread.start();
         }
@@ -121,22 +124,38 @@ public class MainActivity extends Activity {
                     clicksSocket.setSoTimeout(5000);
                     inputstream = clicksSocket.getInputStream();//
                     // 为了显示多个客户端
-                    CurrentClient = getClientIpAddress(clicksSocket);
+                    CurrentClient = getClientIpAddress(clicksSocket).replace("/","");
 //                    Client[ClientCode].concat(CurrentClient);
-                    ClientCode ++;
+//                    ClientCode ++;
 //                    Toast.makeText(getApplicationContext(),ClientCode+CurrentClient,Toast.LENGTH_LONG);
                     //启动接收线程
-                    receive_Thread = new Receive_Thread(ClientCode);
+                    receive_Thread = new Receive_Thread();
                     receive_Thread.start();
 
                     if (clicksSocket.isConnected()) {
                         executorService.execute(receive_Thread);
+                        ClientSet.add(CurrentClient);    // Insert client to clientset.
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                receiveEditText.setText("新用户接入："+ CurrentClient);
+                                receiveEditText.setText(CurrentClient);
                             }
                         });
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    outputStream = clicksSocket.getOutputStream();
+                                    if (outputStream != null) {
+                                        outputStream.write(CurrentClient.getBytes("utf-8"));
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+
                     }
                 }
                 clicksSocket.close();
@@ -154,7 +173,7 @@ public class MainActivity extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                receiveEditText.setText("新用户log out："+ CurrentClient);
+                                receiveEditText.setText("Log out:"+CurrentClient);
                             }
                         });
                     } catch (IOException e) {
@@ -171,7 +190,7 @@ public class MainActivity extends Activity {
      */
     class Receive_Thread extends Thread//继承Thread
     {
-        int clientCode;
+        int clientCode=2;
         Receive_Thread(){};
         Receive_Thread(int ClientCode){
             this.clientCode = ClientCode;
