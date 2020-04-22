@@ -93,8 +93,8 @@ public class MainActivity extends Activity {
              * 启动服务器监听线程
              */
 //            ClientCode = 0;
-            ServerSocket_thread serversocket_thread = new ServerSocket_thread();
-            serversocket_thread.start();
+            ServerSocket_thread serverSocket_thread = new ServerSocket_thread();
+            serverSocket_thread.start();
         }
     };
     /**
@@ -168,14 +168,9 @@ public class MainActivity extends Activity {
                 if (serverSocket != null) {
                     try {
                         isStart = false;
-                        serverSocket.close();
                         receive_Thread.interrupt();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                receiveEditText.setText("Log out:"+CurrentClient);
-                            }
-                        });
+                        executorService.shutdown();
+                        serverSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -190,10 +185,10 @@ public class MainActivity extends Activity {
      */
     class Receive_Thread extends Thread//继承Thread
     {
-        int clientCode=2;
+        Socket socket;
         Receive_Thread(){};
-        Receive_Thread(int ClientCode){
-            this.clientCode = ClientCode;
+        Receive_Thread(Socket socket){
+            this.socket = socket;
         }
         public void run()//重写run方法
         {
@@ -206,7 +201,7 @@ public class MainActivity extends Activity {
                     {
                         public void run()
                         {
-                            textView[clientCode-1].setText(new String(buf,0,len));
+                            textView[1].setText(new String(buf,0,len));
                         }
                     });
             }
