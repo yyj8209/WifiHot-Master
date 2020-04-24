@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (TCPClient.getInstance().isConnect()) {
                     byte[] data = tv_send.getText().toString().getBytes();
+                    Log.e(TAG,tv_send.getText().toString());
                     send(data);
                 } else {
                     Toast.makeText(MainActivity.this,"尚未连接，请连接Socket",Toast.LENGTH_SHORT).show();
@@ -142,10 +143,10 @@ public class MainActivity extends AppCompatActivity {
             byte[] data = new byte[size];
             System.arraycopy(buffer, 0, data, 0, size);
 
-            final String oxValue = data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
+            final String oxValue = new String(buffer,0,size); // data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
             Log.i(TAG,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
 
-            tv_receive.setText(tv_receive.getText().toString() + oxValue + "\n");
+            tv_receive.setText( oxValue + "\n");
 
         }
     };

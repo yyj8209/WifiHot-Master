@@ -62,7 +62,6 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/message_EditText"
         android:layout_marginLeft="65dp"
-        android:layout_marginTop="1dp"
         android:text="启动服务" />
 
     <!-- 接收消息框 -->
@@ -73,7 +72,6 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/message_EditText"
         android:layout_marginRight="85dp"
-        android:layout_marginTop="-1dp"
         android:text="发送消息" />
 
     <EditText

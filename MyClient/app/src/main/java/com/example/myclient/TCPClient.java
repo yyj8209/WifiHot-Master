@@ -126,6 +126,7 @@ public class TCPClient {
      * */
     public void disconnect() {
         isStop = true;
+        Log.e(TAG,"断开客户端");
         sendStrCmds(' '+ socketThead.ip,1001);   // try sending info to exit
         try {
             if (outputStream != null) {
@@ -161,9 +162,11 @@ public class TCPClient {
             @Override
             public void run() {
                 try {
+                    Log.e(TAG,new String(mBuffer,0,mBuffer.length));
+
                     if (outputStream != null) {
                         outputStream.write(mBuffer);
-                        outputStream.flush();
+//                        outputStream.flush();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

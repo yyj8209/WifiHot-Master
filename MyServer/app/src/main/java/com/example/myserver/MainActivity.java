@@ -102,6 +102,7 @@ public class MainActivity extends Activity {
      */
     class ServerSocket_thread extends Thread
     {
+        @Override
         public void run()//重写Thread的run方法
         {
             try
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
                 {
                     //监听连接 ，如果无连接就会处于阻塞状态，一直在这等着
                     clicksSocket = serverSocket.accept();
-                    clicksSocket.setSoTimeout(5000);
+                    clicksSocket.setSoTimeout(10000);
                     inputstream = clicksSocket.getInputStream();//
                     // 为了显示多个客户端
                     CurrentClient = getClientIpAddress(clicksSocket).replace("/","");
@@ -129,7 +130,7 @@ public class MainActivity extends Activity {
 //                    ClientCode ++;
 //                    Toast.makeText(getApplicationContext(),ClientCode+CurrentClient,Toast.LENGTH_LONG);
                     //启动接收线程
-                    receive_Thread = new Receive_Thread();
+                    receive_Thread = new Receive_Thread(clicksSocket);
                     receive_Thread.start();
 
                     if (clicksSocket.isConnected()) {
@@ -138,27 +139,28 @@ public class MainActivity extends Activity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                receiveEditText.setText(CurrentClient);
+                                receiveEditText.setText("新接入："+CurrentClient);
                             }
                         });
 
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
                                     outputStream = clicksSocket.getOutputStream();
                                     if (outputStream != null) {
                                         outputStream.write(CurrentClient.getBytes("utf-8"));
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
                                 }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        }).start();
+                        }
+                    }).start();
 
                     }
                 }
-                clicksSocket.close();
+//                clicksSocket.close();     // 关闭所有线程，可以用清理线程池的方式。
+                executorService.shutdownNow();
             }
             catch (IOException e)
             {
@@ -167,9 +169,11 @@ public class MainActivity extends Activity {
             } finally {
                 if (serverSocket != null) {
                     try {
-                        isStart = false;
+//                        isStart = false;
                         receive_Thread.interrupt();
                         executorService.shutdown();
+                        inputstream.close();
+                        outputStream.close();
                         serverSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -190,34 +194,31 @@ public class MainActivity extends Activity {
         Receive_Thread(Socket socket){
             this.socket = socket;
         }
+
+        @Override
         public void run()//重写run方法
         {
             try
             {
+//                while(true){
                     final byte[] buf = new byte[1024];
-                    final int len = inputstream.read(buf);
+//                    final int len = inputstream.read(buf);
+                    final int len = socket.getInputStream().read(buf);
                     Log.e(TAG,new String(buf,0,len));
                     runOnUiThread(new Runnable()
                     {
                         public void run()
                         {
-                            textView[1].setText(new String(buf,0,len));
+                            textView[ClientSet.size()-1].setText(new String(buf,0,len));
                         }
                     });
+//                }
             }
             catch (Exception e)
             {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-//            finally {
-//                try {
-//                    clicksSocket.close();
-//                }
-//                catch (IOException e){
-//                    e.printStackTrace();
-//                }
-//            }
         }
     }
     /**
@@ -232,11 +233,11 @@ public class MainActivity extends Activity {
                 @Override
                 public void run() {
                     try {
-                        outputStream = clicksSocket.getOutputStream();
-                        if (outputStream != null) {
-                            outputStream.write(sendEditText.getText().toString().getBytes("utf-8"));
-//                            outputStream.flush();
-                        }
+                            outputStream = clicksSocket.getOutputStream();
+                            if (outputStream != null) {
+                                outputStream.write(sendEditText.getText().toString().getBytes("utf-8"));
+    //                            outputStream.flush();
+                            }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
