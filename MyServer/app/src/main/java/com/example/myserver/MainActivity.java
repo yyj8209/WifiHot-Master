@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
@@ -47,7 +48,7 @@ public class MainActivity extends Activity {
     InputStream inputstream;//创建输入数据流
     OutputStream outputStream;//创建输出数据流
 
-    TreeSet<String> ClientSet;   // Set of clients(IP)
+    ArrayList<SocketBean> ClientList;   // Set of clients(IP)
 //    public static final String Client[] = {"No.1:", "No.2:", "No.3:", "No.4:", "No.5:", "No.6:", "No.7:", "No.8:"};
 //    public int ClientCode = 0;
     public String CurrentClient;
@@ -79,7 +80,7 @@ public class MainActivity extends Activity {
         textView[3] = findViewById(R.id.receive_TextView4);
 
         executorService = Executors.newCachedThreadPool();
-        ClientSet = new TreeSet<String>();
+        ClientList = new ArrayList<SocketBean>();
     }
     /**
      * 启动服务按钮监听事件
@@ -122,8 +123,8 @@ public class MainActivity extends Activity {
                 {
                     //监听连接 ，如果无连接就会处于阻塞状态，一直在这等着
                     clicksSocket = serverSocket.accept();
-                    clicksSocket.setSoTimeout(10000);
-                    inputstream = clicksSocket.getInputStream();//
+                    clicksSocket.setSoTimeout(5000);
+//                    inputstream = clicksSocket.getInputStream();//
                     // 为了显示多个客户端
                     CurrentClient = getClientIpAddress(clicksSocket).replace("/","");
 //                    Client[ClientCode].concat(CurrentClient);
@@ -132,10 +133,13 @@ public class MainActivity extends Activity {
                     //启动接收线程
                     receive_Thread = new Receive_Thread(clicksSocket);
                     receive_Thread.start();
+                    final SocketBean socketBean = null;
+                    socketBean.id = CurrentClient;
+                    socketBean.socket = clicksSocket;
 
                     if (clicksSocket.isConnected()) {
                         executorService.execute(receive_Thread);
-                        ClientSet.add(CurrentClient);    // Insert client to clientset.
+                        ClientList.add(socketBean);    // Insert client to clientset.
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -151,7 +155,9 @@ public class MainActivity extends Activity {
                                     if (outputStream != null) {
                                         outputStream.write(CurrentClient.getBytes("utf-8"));
                                 }
-                            } catch (IOException e) {
+                                    Thread.sleep(10);
+                                    outputStream.close();
+                            } catch (IOException | InterruptedException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -172,8 +178,8 @@ public class MainActivity extends Activity {
 //                        isStart = false;
                         receive_Thread.interrupt();
                         executorService.shutdown();
-                        inputstream.close();
-                        outputStream.close();
+//                        inputstream.close();
+//                        outputStream.close();
                         serverSocket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -201,15 +207,17 @@ public class MainActivity extends Activity {
             try
             {
 //                while(true){
+                Log.e(TAG,String.valueOf(socket.isClosed()));
                     final byte[] buf = new byte[1024];
-//                    final int len = inputstream.read(buf);
-                    final int len = socket.getInputStream().read(buf);
+                    final InputStream is = socket.getInputStream();
+                    final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
+                    final int len = is.read(buf);
                     Log.e(TAG,new String(buf,0,len));
                     runOnUiThread(new Runnable()
                     {
                         public void run()
                         {
-                            textView[ClientSet.size()-1].setText(new String(buf,0,len));
+                            textView[ClientList.size()-1].setText(new String(buf,0,len));
                         }
                     });
 //                }
