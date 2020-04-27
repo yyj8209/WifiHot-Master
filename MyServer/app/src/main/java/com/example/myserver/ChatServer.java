@@ -7,7 +7,7 @@ public class ChatServer {
 	private static final int SOCKET_PORT = 52000;
 	public static ArrayList<SocketBean> mSocketList = new ArrayList<SocketBean>();
 
-	private void initServer() {
+	public void initServer() {
 		try {
 			// 创建一个ServerSocket，用于监听客户端Socket的连接请求
 			ServerSocket server = new ServerSocket(SOCKET_PORT);

@@ -127,13 +127,10 @@ public class MainActivity extends Activity {
 //                    inputstream = clicksSocket.getInputStream();//
                     // 为了显示多个客户端
                     CurrentClient = getClientIpAddress(clicksSocket).replace("/","");
-//                    Client[ClientCode].concat(CurrentClient);
-//                    ClientCode ++;
-//                    Toast.makeText(getApplicationContext(),ClientCode+CurrentClient,Toast.LENGTH_LONG);
                     //启动接收线程
                     receive_Thread = new Receive_Thread(clicksSocket);
                     receive_Thread.start();
-                    final SocketBean socketBean = null;
+                    final SocketBean socketBean = new SocketBean("",clicksSocket);
                     socketBean.id = CurrentClient;
                     socketBean.socket = clicksSocket;
 
@@ -147,21 +144,22 @@ public class MainActivity extends Activity {
                             }
                         });
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                    outputStream = clicksSocket.getOutputStream();
-                                    if (outputStream != null) {
-                                        outputStream.write(CurrentClient.getBytes("utf-8"));
-                                }
-                                    Thread.sleep(10);
-                                    outputStream.close();
-                            } catch (IOException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+////                                inputstream = clicksSocket.getInputStream();//
+//                                outputStream = clicksSocket.getOutputStream();
+//                                if (outputStream != null) {
+//                                    outputStream.write(CurrentClient.getBytes("utf-8"));
+//                                }
+////                                    Thread.sleep(10);
+////                                    outputStream.close();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }).start();
 
                     }
                 }
@@ -206,8 +204,8 @@ public class MainActivity extends Activity {
         {
             try
             {
-//                while(true){
-                Log.e(TAG,String.valueOf(socket.isClosed()));
+                while(true){
+                    Log.e(TAG,String.valueOf(socket.isClosed()));
                     final byte[] buf = new byte[1024];
                     final InputStream is = socket.getInputStream();
                     final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
@@ -220,7 +218,24 @@ public class MainActivity extends Activity {
                             textView[ClientList.size()-1].setText(new String(buf,0,len));
                         }
                     });
-//                }
+                }
+
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+////                            inputstream = clicksSocket.getInputStream();//
+////                            outputStream = clicksSocket.getOutputStream();
+//                            if (os != null) {
+//                                os.write(CurrentClient.getBytes("utf-8"));
+//                            }
+////                                    Thread.sleep(10);
+////                                    outputStream.close();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
             }
             catch (Exception e)
             {
@@ -236,21 +251,22 @@ public class MainActivity extends Activity {
 
         @Override
         public void onClick(View v) {
+        Toast.makeText(MainActivity.this, "reserved", Toast.LENGTH_LONG).show();
             // TODO Auto-generated method stub
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                            outputStream = clicksSocket.getOutputStream();
-                            if (outputStream != null) {
-                                outputStream.write(sendEditText.getText().toString().getBytes("utf-8"));
-    //                            outputStream.flush();
-                            }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                            outputStream = clicksSocket.getOutputStream();
+//                            if (outputStream != null) {
+//                                outputStream.write(sendEditText.getText().toString().getBytes("utf-8"));
+//    //                            outputStream.flush();
+//                            }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
 
         }
     };
