@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     public static final int MAXCLIENT = 8;
 
     private static final String TAG = "MainActivity";
+    private static final String TAG_D = "TAG_DEBUG";
     ServerSocket serverSocket;//创建ServerSocket对象
     Socket clicksSocket;//连接通道，创建Socket对象
     ExecutorService executorService;   // 创建线程池
@@ -98,6 +99,7 @@ public class MainActivity extends Activity {
             serverSocket_thread.start();
         }
     };
+
     /**
      * 服务器监听线程
      */
@@ -135,14 +137,15 @@ public class MainActivity extends Activity {
                     socketBean.socket = clicksSocket;
 
                     if (clicksSocket.isConnected()) {
-                        executorService.execute(receive_Thread);
                         ClientList.add(socketBean);    // Insert client to clientset.
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                receiveEditText.setText("新接入："+CurrentClient);
+                                receiveEditText.setText("当前接入："+CurrentClient);
                             }
                         });
+                        Log.e(TAG_D,"客户端数量："+ClientList.size());
+//                        executorService.execute(receive_Thread);
 
 //                    new Thread(new Runnable() {
 //                        @Override
@@ -164,7 +167,7 @@ public class MainActivity extends Activity {
                     }
                 }
 //                clicksSocket.close();     // 关闭所有线程，可以用清理线程池的方式。
-                executorService.shutdownNow();
+//                executorService.shutdownNow();
             }
             catch (IOException e)
             {
@@ -175,7 +178,8 @@ public class MainActivity extends Activity {
                     try {
 //                        isStart = false;
                         receive_Thread.interrupt();
-                        executorService.shutdown();
+                        Log.e(TAG_D,"接收线程关闭");
+//                        executorService.shutdown();
 //                        inputstream.close();
 //                        outputStream.close();
                         serverSocket.close();
@@ -197,6 +201,7 @@ public class MainActivity extends Activity {
         Receive_Thread(){};
         Receive_Thread(Socket socket){
             this.socket = socket;
+            Log.e(TAG_D,"启动新线程");
         }
 
         @Override
@@ -205,12 +210,12 @@ public class MainActivity extends Activity {
             try
             {
                 while(true){
-                    Log.e(TAG,String.valueOf(socket.isClosed()));
+//                    Log.e(TAG_D,String.valueOf(socket.isClosed()));
                     final byte[] buf = new byte[1024];
                     final InputStream is = socket.getInputStream();
                     final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
                     final int len = is.read(buf);
-                    Log.e(TAG,new String(buf,0,len));
+                    Log.e(TAG_D,new String(buf,0,len));
                     runOnUiThread(new Runnable()
                     {
                         public void run()
@@ -308,5 +313,22 @@ public class MainActivity extends Activity {
             Log.e("Main", ex.toString());
         }
         return null;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (serverSocket != null) {
+            try {
+                Log.e(TAG_D,"ServerSocket closed.");
+//                        executorService.shutdown();
+//                        inputstream.close();
+//                        outputStream.close();
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

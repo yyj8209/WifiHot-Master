@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
@@ -157,5 +158,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         TCPClient.getInstance().disconnect();
         super.onDestroy();
+
     }
 }
