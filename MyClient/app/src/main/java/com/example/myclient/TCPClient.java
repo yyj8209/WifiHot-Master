@@ -127,7 +127,7 @@ public class TCPClient {
     public void disconnect() {
         isStop = true;
         Log.e(TAG,"断开客户端");
-        sendStrCmds(socketThead.ip+" 即将退出",1001);   // try sending info to exit
+        sendByteCmd(socketThead.ip.getBytes(),1001);   // try sending info to exit
         try {
             if (outputStream != null) {
                 outputStream.close();

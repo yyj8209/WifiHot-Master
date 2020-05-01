@@ -11,6 +11,7 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,7 +41,7 @@ public class MainActivity extends Activity {
 //    ServerSocket serverSocket;//创建ServerSocket对象
 //    Socket clicksSocket;//连接通道，创建Socket对象
 //    ExecutorService executorService;   // 创建线程池
-    Receive_Thread receive_Thread;
+//    Receive_Thread receive_Thread;
     Button startButton;//发送按钮
     EditText portEditText, ipEditText;//端口号和IP
     EditText receiveEditText;//接收消息框
@@ -52,7 +53,7 @@ public class MainActivity extends Activity {
     ArrayList<SocketBean> ClientList;   // Set of clients(IP)
 //    public static final String Client[] = {"No.1:", "No.2:", "No.3:", "No.4:", "No.5:", "No.6:", "No.7:", "No.8:"};
 //    public int ClientCode = 0;
-    public String CurrentClient;
+    public String CurrentClient = new String("0.0.0.0");
     public boolean isStart = true;
     public TextView textView[] = new TextView[4];
 
@@ -75,18 +76,14 @@ public class MainActivity extends Activity {
         startButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        startServer();
-                    }
-                }).start();
+                startServer();
             }
         });
         sendButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMsg();
+                final String strMsg = sendEditText.getText().toString();
+                sendMsg(CurrentClient,strMsg);
             }
         });
 
@@ -103,59 +100,58 @@ public class MainActivity extends Activity {
      */
     private void startServer() {
 
-        ServerSocket serverSocket = null;
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        int port =Integer.valueOf(portEditText.getText().toString());//获取portEditText中的端口号
-        try{
-                serverSocket = new ServerSocket(port);//监听port端口，这个程序的通信端口就是port了
-                ipEditText.setText(getHostIpAddress());
-                while (isStart)
-                {
-                    //监听连接 ，如果无连接就会处于阻塞状态，一直在这等着
-                    Socket clicksSocket = serverSocket.accept();
-                    clicksSocket.setSoTimeout(5000);
-                    CurrentClient = getClientIpAddress(clicksSocket).replace("/","");
-                    final SocketBean socketBean = new SocketBean("",clicksSocket);
-                    socketBean.id = CurrentClient;
-                    socketBean.socket = clicksSocket;
-                    receive_Thread = new Receive_Thread(clicksSocket);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-                    if (clicksSocket.isConnected()) {
-                        ClientList.add(socketBean);    // Insert client to clientset.
-                        //启动接收线程
-//                        receive_Thread.start();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                receiveEditText.setText("当前接入："+CurrentClient);
-                            }
-                        });
-                        Log.d(TAG_D,"客户端数量："+ClientList.size());
-                        executorService.execute(receive_Thread);
+                ExecutorService executorService = Executors.newCachedThreadPool();
+                final int port = Integer.valueOf(portEditText.getText().toString());//获取portEditText中的端口号
+                try {
+                    ServerSocket serverSocket = new ServerSocket(port);//监听port端口，这个程序的通信端口就是port了
+                    ipEditText.setText(getHostIpAddress());
+                    while (isStart) {
+                        //监听连接 ，如果无连接就会处于阻塞状态，一直在这等着
+                        Socket clicksSocket = serverSocket.accept();
+                        clicksSocket.setSoTimeout(100000);
+                        CurrentClient = getClientIpAddress(clicksSocket);
+                        final SocketBean socketBean = new SocketBean(CurrentClient, clicksSocket);
+
+                        if (clicksSocket.isConnected()) {
+                            ClientList.add(socketBean);    // Insert client to clientset.
+                            //启动接收线程
+                            receiveEditText.setText("当前接入：" + CurrentClient);
+
+//                            Toast.makeText(getApplicationContext(), "当前接入：" + CurrentClient,
+//                                    Toast.LENGTH_LONG).show();
+                            Log.d(TAG_D, "客户端数量：" + ClientList.size());
+                            Thread.sleep(10);
+                            Receive_Thread receive_Thread = new Receive_Thread(clicksSocket);
+                            receive_Thread.start();
+//                            executorService.execute(receive_Thread);
+                        }
                     }
-                }
-                serverSocket.close();     // 关闭服务器，所有线程，可以用清理线程池的方式。
-//                executorService.shutdownNow();
-            }
-            catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } finally {
-                if (serverSocket != null) {
-                    try {
-//                        isStart = false;
-                        Log.d(TAG_D,"接收线程关闭");
-//                        executorService.shutdown();
-//                        inputstream.close();
-//                        outputStream.close();
-                        serverSocket.close();
-                        receive_Thread.interrupt();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    serverSocket.close();     // 关闭服务器，所有线程，可以用清理线程池的方式。
+                    //                executorService.shutdownNow();
+                } catch (IOException | InterruptedException e) {   // InterruptedException 为sleep 的异常
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } finally {
+//                    if (serverSocket != null) {
+//                        try {
+//                            //                        isStart = false;
+//                            Log.d(TAG_D, "接收线程关闭");
+//                            //                        executorService.shutdown();
+//                            //                        inputstream.close();
+//                            //                        outputStream.close();
+//                            serverSocket.close();
+//                            receive_Thread.interrupt();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
                 }
             }
+        }).start();
     };
 
     /**
@@ -259,7 +255,7 @@ public class MainActivity extends Activity {
         Receive_Thread(){};
         Receive_Thread(Socket socket){
             this.socket = socket;
-            Log.d(TAG_D,"启动新线程");
+            Log.d(TAG_D,"启动新的接收线程("+getClientIpAddress(socket)+")");
         }
 
         @Override
@@ -273,14 +269,21 @@ public class MainActivity extends Activity {
                     final InputStream is = socket.getInputStream();
                     final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
                     final int len = is.read(buf);
-                    Log.d(TAG_D,new String(buf,0,len));
-                    runOnUiThread(new Runnable()
-                    {
-                        public void run()
+                    final String StrRecv = new String(buf,0,len);
+                    Log.d(TAG_D,"接收到来自"+getClientIpAddress(socket)+"的信息："+StrRecv);
+                    if(StrRecv.contains("192.168.")){
+                        ClientList.remove(userIP2SocketBean(ClientList,StrRecv));
+                        Log.d(TAG_D,"客户端列表-1，当前客户端数量："+ClientList.size());
+                        Thread.sleep(3000);
+                    }else{
+                        runOnUiThread(new Runnable()
                         {
-                            textView[ClientList.size()-1].setText(new String(buf,0,len));
-                        }
-                    });
+                            public void run()
+                            {
+                                textView[ClientList.size()-1].setText(StrRecv);
+                            }
+                        });
+                    }
                 }
 
 //                new Thread(new Runnable() {
@@ -307,6 +310,28 @@ public class MainActivity extends Activity {
             }
         }
     }
+
+    /**
+     * 发送消息给多个客户端的线程
+     */
+//    class SendThread extends Thread{
+//        private ArrayList<SocketBean> arrayList;
+//        public SendThread(ArrayList<SocketBean> arrayList){
+//            this.arrayList = arrayList;
+//        }
+//
+//        @Override
+//        public void run() {
+//            try{
+//                while(true){
+//
+//                }
+//            }catch (IOException e){
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
     /**
      * 发送消息按钮事件
      */
@@ -329,6 +354,43 @@ public class MainActivity extends Activity {
 //            }).start();
     };
     /**
+     * 发送消息按钮事件
+     */
+    private void sendMsg(String userIP,final String strMsg) {
+        final Socket CurrentSocket = userIP2SocketBean(ClientList,userIP).socket;
+        Toast.makeText(MainActivity.this, "reserved", Toast.LENGTH_LONG).show();
+        // TODO Auto-generated method stub
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                            OutputStream outputStream = CurrentSocket.getOutputStream();
+                            if (outputStream != null) {
+                                outputStream.write(strMsg.getBytes("utf-8"));
+    //                            outputStream.flush();
+                            }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+    };
+
+    private SocketBean userIP2SocketBean(ArrayList<SocketBean> arrayList,String userIP){
+        SocketBean socketBean = null;
+        String ip = new String("0.0.0.0");
+//        Socket socket = null;
+        Iterator iterator = arrayList.iterator();
+        while(iterator.hasNext()){
+            socketBean = (SocketBean)iterator.next();
+//            ip = socketBean.id;
+//            socket = socketBean.socket;
+            if(!userIP.equals(socketBean.id))
+                break;
+        }
+        return socketBean;
+    }
+    /**
      *
      * 获取WIFI下ip地址
      */
@@ -341,7 +403,7 @@ public class MainActivity extends Activity {
 //        return String.format("%d.%d.%d.%d",
 //                (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
 //                (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
-        return socket.getInetAddress().toString();
+        return socket.getInetAddress().toString().replace("/", "");
     }
 
 
