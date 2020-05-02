@@ -13,6 +13,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class TCPClient {
+    public static final String TAG_D = "DEBUG";
+
     private static TCPClient tcpClient = null;
     private TCPClient(){}
     public static TCPClient getInstance(){
@@ -126,9 +128,12 @@ public class TCPClient {
      * */
     public void disconnect() {
         isStop = true;
-        Log.e(TAG,"断开客户端");
-        sendByteCmd(socketThead.ip.getBytes(),1001);   // try sending info to exit
+        Log.d(TAG_D,"断开客户端");
+
+        sendByteCmd(new String("disconnect request").getBytes(),1001);   // try sending info to exit
+
         try {
+            Thread.sleep(10);
             if (outputStream != null) {
                 outputStream.close();
             }
@@ -141,7 +146,7 @@ public class TCPClient {
                 socket.close();
                 socket = null;
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         if (socketThead != null) {
@@ -162,10 +167,9 @@ public class TCPClient {
             @Override
             public void run() {
                 try {
-                    Log.e(TAG,new String(mBuffer,0,mBuffer.length));
-
                     if (outputStream != null) {
                         outputStream.write(mBuffer);
+                        Log.d(TAG_D,new String(mBuffer,0,mBuffer.length));
 //                        outputStream.flush();
                     }
                 } catch (IOException e) {

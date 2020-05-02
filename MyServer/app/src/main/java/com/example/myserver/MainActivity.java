@@ -264,17 +264,18 @@ public class MainActivity extends Activity {
             try
             {
                 while(true){
-//                    Log.d(TAG_D,String.valueOf(socket.isClosed()));
                     final byte[] buf = new byte[1024];
                     final InputStream is = socket.getInputStream();
                     final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
                     final int len = is.read(buf);
                     final String StrRecv = new String(buf,0,len);
                     Log.d(TAG_D,"接收到来自"+getClientIpAddress(socket)+"的信息："+StrRecv);
-                    if(StrRecv.contains("192.168.")){
-                        ClientList.remove(userIP2SocketBean(ClientList,StrRecv));
-                        Log.d(TAG_D,"客户端列表-1，当前客户端数量："+ClientList.size());
-                        Thread.sleep(3000);
+                    if(StrRecv.toLowerCase().contains("disconnect request")){
+                        ClientList.remove(userIP2SocketBean(ClientList,getClientIpAddress(socket)));
+                        Log.d(TAG_D,"当前客户端数量："+ClientList.size());
+                        is.close();
+                        os.close();
+                        socket.close();
                     }else{
                         runOnUiThread(new Runnable()
                         {

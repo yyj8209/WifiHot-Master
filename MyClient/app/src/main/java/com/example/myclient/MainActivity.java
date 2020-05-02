@@ -15,7 +15,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-    String TAG = "MainActivity";
+    public static final String TAG = "MainActivity";
+    public static final String TAG_D = "DEBUG";
     private TextView tv_state, tv_send, tv_receive;
     private Button btn_connect, btn_disconnect, btn_send, btn_clear;
     private EditText et_ip, et_port;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (TCPClient.getInstance().isConnect()) {
                     byte[] data = tv_send.getText().toString().getBytes();
-                    Log.e(TAG,tv_send.getText().toString());
+//                    Log.e(TAG_D,tv_send.getText().toString());
                     send(data);
                 } else {
                     Toast.makeText(MainActivity.this,"尚未连接，请连接Socket",Toast.LENGTH_SHORT).show();
@@ -110,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
      * */
     private void disconnect(){
         TCPClient.getInstance().disconnect();
-        tv_state.setText("未连接");
+        if(!TCPClient.getInstance().isConnect())
+            tv_state.setText("未连接");
     }
 
     /**
@@ -128,13 +130,13 @@ public class MainActivity extends AppCompatActivity {
     private TCPClient.OnDataReceiveListener dataReceiveListener = new TCPClient.OnDataReceiveListener() {
         @Override
         public void onConnectSuccess() {
-            Log.i(TAG,"onDataReceive connect success");
+            Log.i(TAG_D,"onDataReceive connect success");
             tv_state.setText("已连接");
         }
 
         @Override
         public void onConnectFail() {
-            Log.e(TAG,"onDataReceive connect fail");
+            Log.e(TAG_D,"onDataReceive connect fail");
             tv_state.setText("未连接");
         }
 
@@ -145,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             System.arraycopy(buffer, 0, data, 0, size);
 
             final String oxValue = new String(buffer,0,size); // data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
-            Log.i(TAG,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
+            Log.i(TAG_D,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
 
             tv_receive.setText( oxValue + "\n");
 
