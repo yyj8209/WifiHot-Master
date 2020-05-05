@@ -28,7 +28,7 @@ public class ChatServerActivity extends Activity {
 	MainActivity.Receive_Thread receive_Thread;
 	Button startButton;//发送按钮
 	EditText portEditText, ipEditText;//端口号和IP
-	EditText receiveEditText;//接收消息框
+	TextView receiveTextView;//接收消息框
 	Button sendButton;//发送按钮
 	EditText sendEditText;//发送消息框
 	InputStream inputstream;//创建输入数据流
@@ -48,7 +48,7 @@ public class ChatServerActivity extends Activity {
 		startButton = (Button) findViewById(R.id.start_button);
 		portEditText = (EditText) findViewById(R.id.port_EditText);
 		ipEditText = (EditText) findViewById(R.id.ip_EditText);
-		receiveEditText = (EditText) findViewById(R.id.receive_EditText);
+		receiveTextView = (TextView) findViewById(R.id.receive_TextView);
 		sendButton = (Button) findViewById(R.id.send_button);
 		sendEditText = (EditText) findViewById(R.id.message_EditText);
 

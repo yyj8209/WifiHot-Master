@@ -7,34 +7,44 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.app.Activity;
-import android.content.SharedPreferences.Editor;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.concurrent.ConcurrentHashMap;
+
+import androidx.annotation.UiThread;
 
 
 public class MainActivity extends Activity {
 
     public static final int MAXCLIENT = 8;
+    Context context;
 
     private static final String TAG = "MainActivity";
     private static final String TAG_D = "TAG_DEBUG";
@@ -42,20 +52,25 @@ public class MainActivity extends Activity {
 //    Socket clicksSocket;//连接通道，创建Socket对象
 //    ExecutorService executorService;   // 创建线程池
 //    Receive_Thread receive_Thread;
-    Button startButton;//发送按钮
-    EditText portEditText, ipEditText;//端口号和IP
-    EditText receiveEditText;//接收消息框
-    Button sendButton;//发送按钮
-    EditText sendEditText;//发送消息框
+    private Button startButton;//发送按钮
+    private EditText portEditText, ipEditText;//端口号和IP
+    private TextView receiveTextView;//接收消息框
+    private Button sendButton;//发送按钮
+    private EditText sendEditText;//发送消息框
+    private ListView listView;
 //    InputStream inputstream;//创建输入数据流
 //    OutputStream outputStream;//创建输出数据流
 
-    ArrayList<SocketBean> ClientList;   // Set of clients(IP)
+    private ConcurrentHashMap<String, Object> ClientMap;   // Set of clients(IP)
+    private List<ConcurrentHashMap<String, Object>> ClientList = new CopyOnWriteArrayList<>();
+    public static final String CLIENT_IP = "IP";
+    public static final String CLIENT_SOCKET = "CLIENTSOCKET";
+
 //    public static final String Client[] = {"No.1:", "No.2:", "No.3:", "No.4:", "No.5:", "No.6:", "No.7:", "No.8:"};
 //    public int ClientCode = 0;
     public String CurrentClient = new String("0.0.0.0");
     public boolean isStart = true;
-    public TextView textView[] = new TextView[4];
+    public TextView textView[] = new TextView[8];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +80,17 @@ public class MainActivity extends Activity {
          * 读一下手机wifi状态下的ip地址，只有知道它的ip才能连接它嘛
          */
 //        Toast.makeText(MainActivity.this, getLocalIpAddress(), Toast.LENGTH_LONG).show();
+        context = getApplicationContext();
 
         startButton = (Button) findViewById(R.id.start_button);
         portEditText = (EditText) findViewById(R.id.port_EditText);
         ipEditText = (EditText) findViewById(R.id.ip_EditText);
-        receiveEditText = (EditText) findViewById(R.id.receive_EditText);
+        receiveTextView = (TextView) findViewById(R.id.receive_TextView);
         sendButton = (Button) findViewById(R.id.send_button);
         sendEditText = (EditText) findViewById(R.id.message_EditText);
+        listView = (ListView) findViewById(R.id.lv_client);
+        sendEditText.requestFocus();
+        receiveTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         startButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -86,14 +105,25 @@ public class MainActivity extends Activity {
                 sendMsg(CurrentClient,strMsg);
             }
         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(context,ClientList.get(i).get(CLIENT_IP).toString(),Toast.LENGTH_LONG).show();
+            }
+        });
+
 
         textView[0] = findViewById(R.id.receive_TextView1);
         textView[1] = findViewById(R.id.receive_TextView2);
         textView[2] = findViewById(R.id.receive_TextView3);
         textView[3] = findViewById(R.id.receive_TextView4);
+        textView[4] = findViewById(R.id.receive_TextView5);
+        textView[5] = findViewById(R.id.receive_TextView6);
+        textView[6] = findViewById(R.id.receive_TextView7);
+        textView[7] = findViewById(R.id.receive_TextView8);
 
 //        executorService = Executors.newCachedThreadPool();
-        ClientList = new ArrayList<SocketBean>();
+
     }
     /**
      * 启动服务按钮监听事件
@@ -114,16 +144,25 @@ public class MainActivity extends Activity {
                         Socket clicksSocket = serverSocket.accept();
                         clicksSocket.setSoTimeout(100000);
                         CurrentClient = getClientIpAddress(clicksSocket);
-                        final SocketBean socketBean = new SocketBean(CurrentClient, clicksSocket);
+//                        final SocketBean socketBean = new SocketBean(ClientList.size()+1,CurrentClient, clicksSocket);
 
                         if (clicksSocket.isConnected()) {
-                            ClientList.add(socketBean);    // Insert client to clientset.
+                            ClientMap  = new ConcurrentHashMap<>();
+                            ClientMap.put(CLIENT_IP,CurrentClient);
+                            ClientMap.put(CLIENT_SOCKET,clicksSocket);    // Insert client to clientset.
+                            ClientList.add(ClientMap);    // 更新 List
+                            updateListView();
                             //启动接收线程
-                            receiveEditText.setText("当前接入：" + CurrentClient);
+                            receiveTextView.append("当前接入：\n" + CurrentClient+"\n");
+                            receiveTextView.append("客户端数量：" + ClientList.size()+"\n");
+//                            Log.d(TAG_D, "客户端数量：" + ClientMap.size());
+                            int scrollAmount = receiveTextView.getLayout().getLineTop(receiveTextView.getLineCount())
+                                    - receiveTextView.getHeight();
+                            if (scrollAmount > 0)
+                                receiveTextView.scrollTo(0, scrollAmount);
+                            else
+                                receiveTextView.scrollTo(0, 0);
 
-//                            Toast.makeText(getApplicationContext(), "当前接入：" + CurrentClient,
-//                                    Toast.LENGTH_LONG).show();
-                            Log.d(TAG_D, "客户端数量：" + ClientList.size());
                             Thread.sleep(10);
                             Receive_Thread receive_Thread = new Receive_Thread(clicksSocket);
                             receive_Thread.start();
@@ -191,14 +230,14 @@ public class MainActivity extends Activity {
 //                    socketBean.socket = clicksSocket;
 //
 //                    if (clicksSocket.isConnected()) {
-//                        ClientList.add(socketBean);    // Insert client to clientset.
+//                        ClientMap.add(socketBean);    // Insert client to clientset.
 //                        runOnUiThread(new Runnable() {
 //                            @Override
 //                            public void run() {
 //                                receiveEditText.setText("当前接入："+CurrentClient);
 //                            }
 //                        });
-//                        Log.d(TAG_D,"客户端数量："+ClientList.size());
+//                        Log.d(TAG_D,"客户端数量："+ClientMap.size());
 ////                        executorService.execute(receive_Thread);
 //
 ////                    new Thread(new Runnable() {
@@ -269,19 +308,27 @@ public class MainActivity extends Activity {
                     final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
                     final int len = is.read(buf);
                     final String StrRecv = new String(buf,0,len);
-                    Log.d(TAG_D,"接收到来自"+getClientIpAddress(socket)+"的信息："+StrRecv);
-                    if(StrRecv.toLowerCase().contains("disconnect request")){
-                        ClientList.remove(userIP2SocketBean(ClientList,getClientIpAddress(socket)));
-                        Log.d(TAG_D,"当前客户端数量："+ClientList.size());
+                    final String CurrentClient = getClientIpAddress(socket);
+                    Log.d(TAG_D,"接收到来自"+CurrentClient+"的信息："+StrRecv);
+                    if(StrRecv.toLowerCase().contains("disconnect")){
+//                        ClientMap.remove(CurrentClient);   // 这种删除方式先存疑   2020.05.05
+//                        ClientList.remove(getClientIpAddress(socket));    // 更新 List
+//                        ClientMap.remove(userIP2SocketBean(ClientMap,getClientIpAddress(socket)));
+//                        Log.d(TAG_D,"当前客户端数量："+ClientMap.size());
+                        removeClient(CurrentClient);    // 更新 List
+                        receiveTextView.append("当前退出：\n"+CurrentClient+"\n");
+                        receiveTextView.append("客户端数量："+ClientList.size()+"\n");
+                        updateListView();
                         is.close();
                         os.close();
                         socket.close();
                     }else{
                         runOnUiThread(new Runnable()
                         {
+                            @Override
                             public void run()
                             {
-                                textView[ClientList.size()-1].setText(StrRecv);
+                                textView[ClientMap.size()-1].setText(StrRecv);
                             }
                         });
                     }
@@ -358,38 +405,47 @@ public class MainActivity extends Activity {
      * 发送消息按钮事件
      */
     private void sendMsg(String userIP,final String strMsg) {
-        final Socket CurrentSocket = userIP2SocketBean(ClientList,userIP).socket;
+        final Socket CurrentSocket = (Socket)ClientMap.get(userIP);
         Toast.makeText(MainActivity.this, "reserved", Toast.LENGTH_LONG).show();
         // TODO Auto-generated method stub
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                            OutputStream outputStream = CurrentSocket.getOutputStream();
-                            if (outputStream != null) {
-                                outputStream.write(strMsg.getBytes("utf-8"));
-    //                            outputStream.flush();
-                            }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                        OutputStream outputStream = CurrentSocket.getOutputStream();
+                        if (outputStream != null) {
+                            outputStream.write(strMsg.getBytes("utf-8"));
+//                            outputStream.flush();
+                        }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }).start();
+            }
+        }).start();
     };
 
     private SocketBean userIP2SocketBean(ArrayList<SocketBean> arrayList,String userIP){
         SocketBean socketBean = null;
-        String ip = new String("0.0.0.0");
+//        String ip = new String("0.0.0.0");
 //        Socket socket = null;
         Iterator iterator = arrayList.iterator();
         while(iterator.hasNext()){
             socketBean = (SocketBean)iterator.next();
-//            ip = socketBean.id;
+//            ip = socketBean.ip;
 //            socket = socketBean.socket;
-            if(!userIP.equals(socketBean.id))
+            if(!userIP.equals(socketBean.ip))
                 break;
         }
         return socketBean;
+    }
+    private Socket userIP2Socket(ConcurrentHashMap<String, Socket> hashMap,String userIP) {
+        Socket socket = null;
+        for (Object key : hashMap.keySet()) {
+            socket = hashMap.get(key);
+            if (userIP.equals(key))
+                break;
+        }
+        return socket;
     }
     /**
      *
@@ -431,6 +487,40 @@ public class MainActivity extends Activity {
         return null;
     }
 
+    private void updateListView(){
+
+        runOnUiThread(new Runnable(){
+            @Override
+            public void run(){
+//                ClientList.clear();
+                    SimpleAdapter adapter=new SimpleAdapter
+                        (context, ClientList, R.layout.client_item,
+                                new String[]{CLIENT_IP}, new int[]{R.id.client});
+                    listView.setAdapter(adapter);
+//                listView.setAdapter(new myListAdapter(ClientList, context));
+//                listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+            }
+        });
+    }
+
+    private void removeClient(String CurrentClient){
+
+        for(int i=0; i<ClientList.size(); i++){
+            if(CurrentClient.equals(ClientList.get(i).get(CLIENT_IP))){
+                ClientList.remove(i);
+                break;
+            }
+        }
+//        Iterator<ConcurrentHashMap<String, Object>> iterator = ClientList.iterator();
+//        while (iterator.hasNext()) {
+//            if (CurrentClient.equals(iterator.next().get(CLIENT_IP))) {
+//                Log.d(TAG_D, "get the client:" + CurrentClient);
+//                iterator.remove();
+//                break;
+//            }
+//        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

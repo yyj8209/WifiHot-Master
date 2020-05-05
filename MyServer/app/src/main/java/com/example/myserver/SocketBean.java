@@ -3,14 +3,16 @@ package com.example.myserver;
 import java.net.Socket;
 
 public class SocketBean {
-	public String id;
+	public int id;
+	public String ip;
 	public Socket socket;
 	public String deviceId;
 	public String nickName;
 	public String loginTime;
 	
-	public SocketBean(String id, Socket socket) {
+	public SocketBean(int id, String ip, Socket socket) {
 		this.id = id;
+		this.ip = ip;
 		this.socket = socket;
 		this.deviceId = "";
 		this.nickName = "";

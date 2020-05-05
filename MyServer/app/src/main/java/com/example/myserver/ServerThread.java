@@ -51,7 +51,7 @@ public class ServerThread implements Runnable {
 	private void login(String deviceId, String nickName, String loginTime) throws IOException {
 		for (int i=0; i<ChatServer.mSocketList.size(); i++) {
 			SocketBean item = ChatServer.mSocketList.get(i);
-			if (item.id.equals(mSocket.id)) {
+			if (item.ip.equals(mSocket.ip)) {
 				item.deviceId = deviceId;
 				item.nickName = nickName;
 				item.loginTime = loginTime;
@@ -75,7 +75,7 @@ public class ServerThread implements Runnable {
 	private void getlist(String deviceId) throws IOException {
 		for (int i=0; i<ChatServer.mSocketList.size(); i++) {
 			SocketBean item = ChatServer.mSocketList.get(i);
-			if (item.id.equals(mSocket.id) && item.deviceId.equals(deviceId)) {
+			if (item.ip.equals(mSocket.ip) && item.deviceId.equals(deviceId)) {
 				PrintStream ps = new PrintStream(item.socket.getOutputStream());
 				ps.println(getFriend());
 				break;
@@ -86,7 +86,7 @@ public class ServerThread implements Runnable {
 	private void logout(String deviceId) throws IOException {
 		for (int i=0; i<ChatServer.mSocketList.size(); i++) {
 			SocketBean item = ChatServer.mSocketList.get(i);
-			if (item.id.equals(mSocket.id) && item.deviceId.equals(deviceId)) {
+			if (item.ip.equals(mSocket.ip) && item.deviceId.equals(deviceId)) {
 				PrintStream ps = new PrintStream(item.socket.getOutputStream());
 				ps.println("LOGOUT,|");
 				item.socket.close();
