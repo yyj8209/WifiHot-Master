@@ -318,6 +318,12 @@ public class MainActivity extends Activity {
                         removeClient(CurrentClient);    // 更新 List
                         receiveTextView.append("当前退出：\n"+CurrentClient+"\n");
                         receiveTextView.append("客户端数量："+ClientList.size()+"\n");
+                        int scrollAmount = receiveTextView.getLayout().getLineTop(receiveTextView.getLineCount())
+                                - receiveTextView.getHeight();
+                        if (scrollAmount > 0)
+                            receiveTextView.scrollTo(0, scrollAmount);
+                        else
+                            receiveTextView.scrollTo(0, 0);
                         updateListView();
                         is.close();
                         os.close();
@@ -328,28 +334,11 @@ public class MainActivity extends Activity {
                             @Override
                             public void run()
                             {
-                                textView[ClientMap.size()-1].setText(StrRecv);
+                                textView[getClientIndex(CurrentClient)].setText(StrRecv);
                             }
                         });
                     }
                 }
-
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-////                            inputstream = clicksSocket.getInputStream();//
-////                            outputStream = clicksSocket.getOutputStream();
-//                            if (os != null) {
-//                                os.write(CurrentClient.getBytes("utf-8"));
-//                            }
-////                                    Thread.sleep(10);
-////                                    outputStream.close();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
             }
             catch (Exception e)
             {
@@ -521,6 +510,17 @@ public class MainActivity extends Activity {
 //            }
 //        }
     }
+
+    private int getClientIndex(String CurrentClient) {
+        int i = 0;
+        for (; i < ClientList.size(); i++) {
+            if (CurrentClient.equals(ClientList.get(i).get(CLIENT_IP))) {
+                break;
+            }
+        }
+        return i;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

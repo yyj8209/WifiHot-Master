@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        TCPClient.getInstance().disconnect();
         super.onDestroy();
+        TCPClient.getInstance().disconnect();
 
     }
 }
