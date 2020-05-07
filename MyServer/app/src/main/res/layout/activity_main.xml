@@ -10,6 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center_vertical"
         android:id="@+id/server_ip"
         android:orientation="horizontal">
         <TextView
@@ -23,6 +26,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:textSize="14sp"
             android:text=""
             android:enabled="false"/>
         <TextView
@@ -36,11 +40,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
+            android:textSize="14sp"
             android:text="8080" />
         <Button
             android:id="@+id/start_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="12sp"
             android:text="启动服务" />
     </LinearLayout>
 
@@ -48,114 +54,118 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/send_msg"
-        android:layout_below="@+id/server_ip"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:id="@+id/client_info"
+        android:layout_below="@id/server_ip"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/message_TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="发送消息"/>
-        <!-- 发送消息框 -->
+            android:text="客户数量"/>
+        <!-- Client Number -->
         <EditText
-            android:id="@+id/message_EditText"
+            android:id="@+id/client_num_TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-
-            android:hint="输入要发送的消息：" />
+            android:layout_weight="0.5"
+            android:enabled="false"
+            android:gravity="center_horizontal"
+            android:text="0"/>
+        <TextView
+            android:id="@+id/receive_TextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text=""
+            android:background="@android:color/black"
+            android:textColor="@android:color/holo_green_light"/>
         <Button
             android:id="@+id/send_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="12sp"
             android:text="发送消息" />
     </LinearLayout>
 
-    <!-- 客户端列表及服务器提示 -->
+    <!-- 图形显示 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/grid"
-        android:layout_below="@+id/send_msg"
+        android:layout_below="@id/client_info"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.2"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:layout_below="@id/client_info"
+            android:background="@color/colorYellow"
+            android:orientation="horizontal">
             <ListView
+                android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_margin="2dp"
+                android:id="@+id/lv_client"
                 android:background="@android:color/black"
-                android:id="@+id/lv_client"/>
-
-            <TextView
-                android:id="@+id/receive_TextView"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:paddingLeft="3dip"
-                android:paddingRight="3dip"
-                android:paddingTop="1dip"
-                android:textColor="@android:color/white"
-                android:background="@android:color/black"
-                android:scrollbars="vertical"
-                android:text=""/>
+                android:textColor="@color/colorYellow"/>
         </LinearLayout>
-
         <GridLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:layout_marginLeft="10dp"
-            android:rowCount="4"
-            android:columnCount="2">
+            android:layout_weight="2"
+            android:columnCount="2"
+            android:rowCount="4">
             <TextView
                 android:id="@+id/receive_TextView1"
                 android:text="receive_TextView 1"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
+
             <TextView
                 android:id="@+id/receive_TextView2"
                 android:text="receive_TextView 2"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
+
             <TextView
                 android:id="@+id/receive_TextView3"
                 android:text="receive_TextView 3"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
+
             <TextView
                 android:id="@+id/receive_TextView4"
                 android:text="receive_TextView 4"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
+
             <TextView
                 android:id="@+id/receive_TextView5"
                 android:text="receive_TextView 5"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
+
             <TextView
                 android:id="@+id/receive_TextView6"
                 android:text="receive_TextView 6"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
+
             <TextView
                 android:id="@+id/receive_TextView7"
                 android:text="receive_TextView 7"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
             <TextView
                 android:id="@+id/receive_TextView8"
-                android:text="receive_TextView 9"
+                android:text="receive_TextView 8"
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1" />
+                android:layout_rowWeight="1"/>
         </GridLayout>
     </LinearLayout>
+
 </RelativeLayout >
 

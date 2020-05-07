@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         tv_receive = (TextView)findViewById(R.id.tv_receive);
         btn_connect = (Button)findViewById(R.id.bt_connect);
         btn_disconnect = (Button)findViewById(R.id.bt_disconnect);
+        btn_disconnect.setEnabled(false);
         btn_send = (Button)findViewById(R.id.bt_send);
         btn_clear = (Button)findViewById(R.id.bt_clear);
         et_ip = (EditText)findViewById(R.id.ed_ip);
@@ -58,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 connect(ip, Integer.parseInt(port));
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(TCPClient.getInstance().isConnect()){
+                    btn_connect.setEnabled(false);
+                    btn_disconnect.setEnabled(true);
+                }
             }
         });
 
@@ -66,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 disconnect();
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(!TCPClient.getInstance().isConnect()){
+                    btn_connect.setEnabled(true);
+                    btn_disconnect.setEnabled(false);
+                }
             }
         });
 
@@ -154,12 +173,15 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
-
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         TCPClient.getInstance().disconnect();
-
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
+
 }

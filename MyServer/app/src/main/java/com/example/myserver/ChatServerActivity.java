@@ -48,9 +48,9 @@ public class ChatServerActivity extends Activity {
 		startButton = (Button) findViewById(R.id.start_button);
 		portEditText = (EditText) findViewById(R.id.port_EditText);
 		ipEditText = (EditText) findViewById(R.id.ip_EditText);
-		receiveTextView = (TextView) findViewById(R.id.receive_TextView);
+		receiveTextView = (TextView) findViewById(R.id.client_num_TextView);
 		sendButton = (Button) findViewById(R.id.send_button);
-		sendEditText = (EditText) findViewById(R.id.message_EditText);
+//		sendEditText = (EditText) findViewById(R.id.message_EditText);
 
 		startButton.setOnClickListener(startButtonListener);
 		sendButton.setOnClickListener(sendButtonListener);
