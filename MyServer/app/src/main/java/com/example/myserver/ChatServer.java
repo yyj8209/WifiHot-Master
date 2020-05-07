@@ -23,8 +23,8 @@ public class ChatServer {
 		}
 	}
 	
-	public static void main(String[] args) {
-		ChatServer server = new ChatServer();
-		server.initServer();
-	}
+//	public static void main(String[] args) {
+//		ChatServer server = new ChatServer();
+//		server.initServer();
+//	}
 }

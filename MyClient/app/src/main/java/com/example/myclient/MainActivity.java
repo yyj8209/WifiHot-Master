@@ -46,28 +46,7 @@ public class MainActivity extends AppCompatActivity {
         btn_connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String ip = et_ip.getText().toString();
-                String port = et_port.getText().toString();
-
-                if(TextUtils.isEmpty(ip)){
-                    Toast.makeText(MainActivity.this,"IP地址为空",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(TextUtils.isEmpty(port)){
-                    Toast.makeText(MainActivity.this,"端口号为空",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                connect(ip, Integer.parseInt(port));
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(TCPClient.getInstance().isConnect()){
-                    btn_connect.setEnabled(false);
-                    btn_disconnect.setEnabled(true);
-                }
+                myConnect();
             }
         });
 
@@ -75,16 +54,7 @@ public class MainActivity extends AppCompatActivity {
         btn_disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                disconnect();
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if(!TCPClient.getInstance().isConnect()){
-                    btn_connect.setEnabled(true);
-                    btn_disconnect.setEnabled(false);
-                }
+                myDisconnect();
             }
         });
 
@@ -126,6 +96,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * 完整的socket connect
+     * */
+    private void myConnect() {
+        String ip = et_ip.getText().toString();
+        String port = et_port.getText().toString();
+
+        if (TextUtils.isEmpty(ip)) {
+            Toast.makeText(MainActivity.this, "IP地址为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(port)) {
+            Toast.makeText(MainActivity.this, "端口号为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        connect(ip, Integer.parseInt(port));
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (TCPClient.getInstance().isConnect()) {
+            tv_state.setText("已连接-");
+            btn_connect.setEnabled(false);
+            btn_disconnect.setEnabled(true);
+        }
+    }
+
+    /**
      * socket disconnect
      * */
     private void disconnect(){
@@ -134,6 +133,22 @@ public class MainActivity extends AppCompatActivity {
             tv_state.setText("未连接");
     }
 
+    /**
+     * socket disconnect
+     * */
+    private void myDisconnect() {
+        disconnect();
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (!TCPClient.getInstance().isConnect()) {
+            tv_state.setText("未连接-");
+            btn_connect.setEnabled(true);
+            btn_disconnect.setEnabled(false);
+        }
+    }
     /**
      * socket send
      * */
@@ -173,8 +188,24 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+    @Override
+    protected void onResume(){
+        Log.d(TAG_D,"onResume");
+        myConnect();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause(){
+        Log.d(TAG_D,"onPause");
+        myDisconnect();
+        super.onPause();
+    }
+
     @Override
     protected void onDestroy() {
+        Log.d(TAG_D,"onDestroy");
         TCPClient.getInstance().disconnect();
         try {
             Thread.sleep(50);
