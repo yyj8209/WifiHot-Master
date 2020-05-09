@@ -12,7 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
@@ -63,9 +66,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (TCPClient.getInstance().isConnect()) {
-                    byte[] data = tv_send.getText().toString().getBytes();
-//                    Log.e(TAG_D,tv_send.getText().toString());
-                    send(data);
+//                    byte[] data = tv_send.getText().toString().getBytes();
+////                    Log.e(TAG_D,tv_send.getText().toString());
+//                    send(data);
+                    sendIntime();
                 } else {
                     Toast.makeText(MainActivity.this,"尚未连接，请连接Socket",Toast.LENGTH_SHORT).show();
                 }
@@ -155,7 +159,16 @@ public class MainActivity extends AppCompatActivity {
     private void send(byte[] data){
         TCPClient.getInstance().sendByteCmd(data,1001);
     }
-
+    /**
+     * test multi socket continous sending
+     * */
+    private void sendIntime(){
+        while(true) {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+            String formatStr = formatter.format(new Date());
+            send(formatStr.getBytes());
+        }
+    }
 
     /**
      * socket data receive

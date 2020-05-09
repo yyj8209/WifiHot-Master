@@ -115,6 +115,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 CurrentClient = ClientList.get(position).get(CLIENT_IP).toString();
+                removeClient(CurrentClient);
                 return false;
             }
         });
