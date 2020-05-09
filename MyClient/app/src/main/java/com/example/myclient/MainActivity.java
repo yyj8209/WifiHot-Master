@@ -115,14 +115,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG_D,"myConnect start");
         connect(ip, Integer.parseInt(port));
         try {
-            Thread.sleep(50);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         if (TCPClient.getInstance().isConnect()) {
-            tv_state.setText("已连接-");
+//            tv_state.setText("已连接-");
+            Log.d(TAG_D,"client connected");
             btn_connect.setEnabled(false);
             btn_disconnect.setEnabled(true);
         }
@@ -133,8 +135,9 @@ public class MainActivity extends AppCompatActivity {
      * */
     private void disconnect(){
         TCPClient.getInstance().disconnect();
-        if(!TCPClient.getInstance().isConnect())
+        if(!TCPClient.getInstance().isConnect()) {
             tv_state.setText("未连接");
+        }
     }
 
     /**
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
      * */
     private void myDisconnect() {
         disconnect();
+        Log.d(TAG_D,"myDisconnect start");
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
@@ -149,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!TCPClient.getInstance().isConnect()) {
             tv_state.setText("未连接-");
+            Log.d(TAG_D,"client disconnected");
             btn_connect.setEnabled(true);
             btn_disconnect.setEnabled(false);
         }
@@ -163,11 +168,17 @@ public class MainActivity extends AppCompatActivity {
      * test multi socket continous sending
      * */
     private void sendIntime(){
-        while(true) {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
-            String formatStr = formatter.format(new Date());
-            send(formatStr.getBytes());
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+                    String formatStr = formatter.format(new Date());
+                    send(formatStr.getBytes());
+                }
+
+            }
+        }).start();
     }
 
     /**
