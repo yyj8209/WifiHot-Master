@@ -21,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     public static final String TAG_D = "DEBUG";
     private TextView tv_state, tv_send, tv_receive;
-    private Button btn_connect, btn_disconnect, btn_send, btn_clear;
+    private Button btn_connect, btn_disconnect, btn_send, btn_stop, btn_clear;
     private EditText et_ip, et_port;
+    public boolean isSending = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
         tv_receive = (TextView)findViewById(R.id.tv_receive);
         btn_connect = (Button)findViewById(R.id.bt_connect);
         btn_disconnect = (Button)findViewById(R.id.bt_disconnect);
-        btn_disconnect.setEnabled(false);
+//        btn_disconnect.setEnabled(false);
         btn_send = (Button)findViewById(R.id.bt_send);
+        btn_stop = (Button)findViewById(R.id.bt_stop);
         btn_clear = (Button)findViewById(R.id.bt_clear);
         et_ip = (EditText)findViewById(R.id.ed_ip);
         et_port = (EditText)findViewById(R.id.ed_port);
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (TCPClient.getInstance().isConnect()) {
+                    isSending = true;
 //                    byte[] data = tv_send.getText().toString().getBytes();
 ////                    Log.e(TAG_D,tv_send.getText().toString());
 //                    send(data);
@@ -76,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // stop sending
+        btn_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isSending = false;
+            }
+        });
         //clear receive
         btn_clear.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,8 +135,8 @@ public class MainActivity extends AppCompatActivity {
         if (TCPClient.getInstance().isConnect()) {
 //            tv_state.setText("已连接-");
             Log.d(TAG_D,"client connected");
-            btn_connect.setEnabled(false);
-            btn_disconnect.setEnabled(true);
+//            btn_connect.setEnabled(false);
+//            btn_disconnect.setEnabled(true);
         }
     }
 
@@ -136,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     private void disconnect(){
         TCPClient.getInstance().disconnect();
         if(!TCPClient.getInstance().isConnect()) {
-            tv_state.setText("未连接");
+//            tv_state.setText("未连接");
         }
     }
 
@@ -152,10 +162,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if (!TCPClient.getInstance().isConnect()) {
-            tv_state.setText("未连接-");
+//            tv_state.setText("未连接-");
             Log.d(TAG_D,"client disconnected");
-            btn_connect.setEnabled(true);
-            btn_disconnect.setEnabled(false);
+//            btn_connect.setEnabled(true);
+//            btn_disconnect.setEnabled(false);
         }
     }
     /**
@@ -171,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while(TCPClient.getInstance().isConnect()&&isSending) {
                     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
                     String formatStr = formatter.format(new Date());
                     send(formatStr.getBytes());
@@ -188,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     private TCPClient.OnDataReceiveListener dataReceiveListener = new TCPClient.OnDataReceiveListener() {
         @Override
         public void onConnectSuccess() {
-            Log.i(TAG_D,"onDataReceive connect success");
+            Log.d(TAG_D,"onDataReceive connect success");
             tv_state.setText("已连接");
         }
 
@@ -205,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
             System.arraycopy(buffer, 0, data, 0, size);
 
             final String oxValue = new String(buffer,0,size); // data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
-            Log.i(TAG_D,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
+            Log.d(TAG_D,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
 
             tv_receive.setText( oxValue + "\n");
 

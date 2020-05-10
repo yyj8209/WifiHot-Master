@@ -282,7 +282,7 @@ public class MainActivity extends Activity {
     private void sendMsg(String userIP,String strMsg) {
         final Socket CurrentSocket = getClientSocket(userIP);
         final String msg = strMsg;
-        Toast.makeText(context, "reserved", Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, "reserved", Toast.LENGTH_LONG).show();
         Log.d(TAG_D,"Client IP: "+getClientIpAddress(CurrentSocket));
         // TODO Auto-generated method stub
         new Thread(new Runnable() {
@@ -301,6 +301,15 @@ public class MainActivity extends Activity {
                 }
             }
         }).start();
+
+        if(CurrentSocket!=null){
+            try{
+                CurrentSocket.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
     };
 
     private SocketBean userIP2SocketBean(ArrayList<SocketBean> arrayList,String userIP){
@@ -406,6 +415,7 @@ public class MainActivity extends Activity {
         Socket socket = null;
         for (int i = 0; i < ClientList.size(); i++) {
             if (CurrentClient.equals(ClientMapList.get(i).get(CLIENT_IP))) {
+                socket = (Socket) ClientList.get(i).get(CLIENT_SOCKET);
                 break;
             }
         }
