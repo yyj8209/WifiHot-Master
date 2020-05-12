@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +57,7 @@ public class MainActivity extends Activity {
     private EditText portEditText, ipEditText, clientNumEditText;//端口号和IP
     private TextView  receiveTextView;//接收消息框
     private Button sendButton;//发送按钮
-    private ListView listView;
+    private Spinner spinner;
 //    InputStream inputstream;//创建输入数据流
 //    OutputStream outputStream;//创建输出数据流
     private ConcurrentHashMap<String, Object> ClientMap;   // Set of clients(IP)
@@ -87,7 +88,7 @@ public class MainActivity extends Activity {
         clientNumEditText = (EditText) findViewById(R.id.client_num_TextView);
         receiveTextView = (TextView) findViewById(R.id.receive_TextView);
         sendButton = (Button) findViewById(R.id.send_button);
-        listView = (ListView) findViewById(R.id.lv_client);
+        spinner = (Spinner) findViewById(R.id.lv_client);
 //        sendEditText.requestFocus();
         receiveTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
 
@@ -104,21 +105,13 @@ public class MainActivity extends Activity {
                 sendMsg(CurrentClient,strMsg);
             }
         });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                CurrentClient = ClientList.get(i).get(CLIENT_IP).toString();
-                Toast.makeText(context,ClientList.get(i).get(CLIENT_IP).toString(),Toast.LENGTH_LONG).show();
-            }
-        });
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                CurrentClient = ClientList.get(position).get(CLIENT_IP).toString();
-                removeClient(CurrentClient);
-                return false;
-            }
-        });
+//        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                CurrentClient = ClientList.get(i).get(CLIENT_IP).toString();
+//                Toast.makeText(context,ClientList.get(i).get(CLIENT_IP).toString(),Toast.LENGTH_LONG).show();
+//            }
+//        });
 
 
         textView[0] = findViewById(R.id.receive_TextView1);
@@ -168,6 +161,7 @@ public class MainActivity extends Activity {
                                     clientNumEditText.setText( String.valueOf(ClientList.size()));
                                 }
                             });
+//                            sendMsg(CurrentClient,CurrentClient);
                             //启动接收线程
 //                            Log.d(TAG_D, "客户端数量：" + ClientMap.size());
 //                            int scrollAmount = receiveTextView.getLayout().getLineTop(receiveTextView.getLineCount())
@@ -293,7 +287,7 @@ public class MainActivity extends Activity {
                         if (outputStream != null) {
                             outputStream.write(msg.getBytes("utf-8"));
 //                            outputStream.flush();
-                        Thread.sleep(10);
+                        Thread.sleep(50);
                         outputStream.close();
                         }
                 } catch (IOException | InterruptedException e) {
@@ -301,6 +295,7 @@ public class MainActivity extends Activity {
                 }
             }
         }).start();
+
 
         if(CurrentSocket!=null){
             try{
@@ -383,7 +378,7 @@ public class MainActivity extends Activity {
                 SimpleAdapter adapter=new SimpleAdapter
                     (context, ClientList, R.layout.client_item,
                             new String[]{CLIENT_IP}, new int[]{R.id.client});
-                listView.setAdapter(adapter);
+                spinner.setAdapter(adapter);
 //                listView.setAdapter(new myListAdapter(ClientList, context));
 //                listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
             }

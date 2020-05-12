@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while(TCPClient.getInstance().isConnect()&&isSending) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss.SSS");
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM HH:mm:ss.SSS\n");
                     String formatStr = formatter.format(new Date());
                     send(formatStr.getBytes());
                 }
