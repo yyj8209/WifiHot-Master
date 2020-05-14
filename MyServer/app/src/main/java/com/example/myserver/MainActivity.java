@@ -78,8 +78,9 @@ public class MainActivity extends Activity {
 //    public int ClientCode = 0;
     public String CurrentClient;
     public boolean isStart = true;
-    public TextView textView[] = new TextView[8];
-    private LineChart lineChart[] = new LineChart[8];
+    public TextView textView[] = new TextView[MAXCLIENT];
+    private LineChart lineChart[] = new LineChart[MAXCLIENT];
+    private myLineChart mylinechart[] = new myLineChart[MAXCLIENT];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +141,10 @@ public class MainActivity extends Activity {
         lineChart[5] = findViewById(R.id.line_chart1);
         lineChart[6] = findViewById(R.id.line_chart1);
         lineChart[7] = findViewById(R.id.line_chart1);
+        for(int i=0; i<MAXCLIENT; i++){
+            mylinechart[i] = new myLineChart(lineChart[i]);
+            mylinechart[i].initChartSyn();
+        }
 
 //        executorService = Executors.newCachedThreadPool();
 
@@ -275,7 +280,7 @@ public class MainActivity extends Activity {
                             public void run()
                             {
                                 textView[getClientIndex(CurrentClientIP)].setText(CurrentClientIP);
-                                LineChart CurrentLineChart = (LineChart) lineChart[getClientIndex(CurrentClient)];
+                                mylinechart[getClientIndex(CurrentClient)].refreshLineChart(buf,len);
                             }
                         });
 

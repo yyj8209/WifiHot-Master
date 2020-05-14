@@ -176,7 +176,7 @@ public class myLineChart {
         set.setFormSize(15.f);
     }
 
-    public void refreshLineChart(byte[] readBuf, int datLen){
+    public void refreshLineChart(byte[] readBuf, int datLen){   // datLen = msg.arg1.
 //        byte[] readBuf = (byte[]) msg.obj;
 //        int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
         final int BYTES_PER_ROW = 32;
