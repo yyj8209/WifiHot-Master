@@ -121,20 +121,42 @@
             android:layout_weight="2"
             android:columnCount="2"
             android:rowCount="4">
-            <TextView
-                android:id="@+id/receive_TextView1"
-                android:text="receive_TextView 1"
 
+            <LinearLayout
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
+                android:layout_rowWeight="1"
+                android:orientation="vertical">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/line_chart1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"/>
+                <TextView
+                    android:id="@+id/receive_TextView1"
+                    android:text="receive_TextView 1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"/>
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/receive_TextView2"
-                android:text="receive_TextView 2"
-
+            <LinearLayout
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
-
+                android:layout_rowWeight="1"
+                android:orientation="vertical">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/line_chart2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"/>
+                <TextView
+                    android:id="@+id/receive_TextView2"
+                    android:text="receive_TextView 2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"/>
+            </LinearLayout>
             <TextView
                 android:id="@+id/receive_TextView3"
                 android:text="receive_TextView 3"

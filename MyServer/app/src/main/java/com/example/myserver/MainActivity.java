@@ -20,6 +20,8 @@ import java.util.concurrent.Executors;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +40,9 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.LineChart;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import androidx.annotation.UiThread;
@@ -46,6 +51,9 @@ import androidx.annotation.UiThread;
 public class MainActivity extends Activity {
 
     public static final int MAXCLIENT = 8;
+    public static final int CLIENT_LOGIN = 1;
+    public static final int REFRESH = 2;
+    public static final int CLIENT_LOGOUT = 3;
     private static Context context;
     private static final String TAG = "MainActivity";
     private static final String TAG_D = "TAG_DEBUG";
@@ -71,6 +79,7 @@ public class MainActivity extends Activity {
     public String CurrentClient;
     public boolean isStart = true;
     public TextView textView[] = new TextView[8];
+    private LineChart lineChart[] = new LineChart[8];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +131,15 @@ public class MainActivity extends Activity {
         textView[5] = findViewById(R.id.receive_TextView6);
         textView[6] = findViewById(R.id.receive_TextView7);
         textView[7] = findViewById(R.id.receive_TextView8);
+
+        lineChart[0] = findViewById(R.id.line_chart1);
+        lineChart[1] = findViewById(R.id.line_chart2);
+        lineChart[2] = findViewById(R.id.line_chart1);
+        lineChart[3] = findViewById(R.id.line_chart1);
+        lineChart[4] = findViewById(R.id.line_chart1);
+        lineChart[5] = findViewById(R.id.line_chart1);
+        lineChart[6] = findViewById(R.id.line_chart1);
+        lineChart[7] = findViewById(R.id.line_chart1);
 
 //        executorService = Executors.newCachedThreadPool();
 
@@ -256,9 +274,16 @@ public class MainActivity extends Activity {
                             @Override
                             public void run()
                             {
-                                textView[getClientIndex(CurrentClientIP)].setText(StrRecv);
+                                textView[getClientIndex(CurrentClientIP)].setText(CurrentClientIP);
+                                LineChart CurrentLineChart = (LineChart) lineChart[getClientIndex(CurrentClient)];
                             }
                         });
+
+//                        Message message = Message.obtain();
+//                        message.what = REFRESH;
+////                        message.arg1 = Integer.parseInt(CurrentClientIP);
+//                        message.obj = CurrentClientIP;
+//                        handler.sendMessage(message);
                     }
                 }
             }
@@ -270,6 +295,28 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * handler对象，用来接收消息~现在没有调通 20200514
+     *///
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {  //这个是发送过来的消息
+            // 处理从子线程发送过来的消息
+            int arg1 = msg.arg1;  //获取消息携带的属性值
+            int what = msg.what;
+            Object result = msg.obj;
+            switch (what){
+                case CLIENT_LOGIN:
+                    Log.d(TAG_D,"消息处理：用户接入" + result.toString());
+                case REFRESH:
+                    Log.d(TAG_D,"消息处理：处理数据" + result.toString());
+                    Toast.makeText(getApplicationContext(),result.toString(),Toast.LENGTH_LONG).show();
+                case CLIENT_LOGOUT:
+                    Log.d(TAG_D,"消息处理：用户退出" + result.toString());
+            }
+//            Bundle bundle = msg.getData(); // 用来获取消息里面的bundle数据
+        };
+    };
     /**
      * 发送消息按钮事件
      */
