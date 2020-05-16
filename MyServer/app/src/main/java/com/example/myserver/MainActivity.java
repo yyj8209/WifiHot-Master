@@ -135,8 +135,8 @@ public class MainActivity extends Activity {
 
         lineChart[0] = findViewById(R.id.line_chart1);
         lineChart[1] = findViewById(R.id.line_chart2);
-        lineChart[2] = findViewById(R.id.line_chart1);
-        lineChart[3] = findViewById(R.id.line_chart1);
+        lineChart[2] = findViewById(R.id.line_chart3);
+        lineChart[3] = findViewById(R.id.line_chart4);
         lineChart[4] = findViewById(R.id.line_chart1);
         lineChart[5] = findViewById(R.id.line_chart1);
         lineChart[6] = findViewById(R.id.line_chart1);
@@ -484,5 +484,22 @@ public class MainActivity extends Activity {
 //                e.printStackTrace();
 //            }
 //        }
+    }
+    @Override
+    public void onBackPressed()
+    {
+        exit();
+    }
+
+    public void exit()
+    {
+        boolean exit = true;
+
+
+        if(exit)
+        {
+            this.finish();
+        }
+
     }
 }

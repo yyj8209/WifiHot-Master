@@ -50,3 +50,5 @@ Temporary Items
 \WiFiServer\app\build\
 \MyServer\app\build\
 \MyClient\app\build\
+\BtClient\app\build\
+\BtClient\myBluetooth\build\

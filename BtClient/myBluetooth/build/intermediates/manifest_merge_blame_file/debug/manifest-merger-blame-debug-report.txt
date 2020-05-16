@@ -1,0 +1,100 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.wayful.Bluetooth"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="23"
+8-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="27" />
+9-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml
+10    <!-- <uses-sdk -->
+11    <!-- android:minSdkVersion="23" -->
+12    <!-- android:targetSdkVersion="28" /> -->
+13
+14    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+14-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:12:5-74
+14-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:12:22-71
+15    <uses-permission android:name="android.permission.BLUETOOTH" />
+15-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:13:5-68
+15-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:13:22-65
+16    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+16-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:14:5-79
+16-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:14:22-76
+17    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+17-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:15:5-81
+17-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:15:22-78
+18    <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
+19    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+19-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:17:5-81
+19-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:17:22-78
+20    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+20-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:18:5-75
+20-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:18:22-73
+21    <uses-permission android:name="android.permission.INTERNET" />
+21-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:19:5-66
+21-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:19:22-64
+22
+23    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+24    <application
+24-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:22:5-59:19
+25        android:debuggable="true"
+26        android:extractNativeLibs="false"
+27        android:icon="@drawable/app_incon_bluetooth"
+27-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:23:9-53
+28        android:label="@string/app_name"
+28-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:24:9-41
+29        android:testOnly="true"
+30        android:theme="@style/activityTheme" >
+30-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:25:9-45
+31        <activity
+31-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:27:9-38:20
+32            android:name="com.wayful.activity.BluetoothChat"
+32-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:28:13-61
+33            android:configChanges="orientation|keyboardHidden"
+33-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:29:13-63
+34            android:label="@string/app_name"
+34-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:31:13-45
+35            android:theme="@style/activityTheme" >
+35-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:32:13-49
+36
+37            <!-- <intent-filter> -->
+38            <!-- <action android:name="android.intent.action.MAIN" /> -->
+39            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+40            <!-- </intent-filter> -->
+41        </activity>
+42        <activity
+42-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:40:9-52:20
+43            android:name="com.wayful.activity.BluetoothPlot"
+43-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:41:13-61
+44            android:configChanges="orientation|keyboardHidden"
+44-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:42:13-63
+45            android:label="@string/app_name"
+45-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:45:13-45
+46            android:theme="@style/activityTheme"
+46-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:46:13-49
+47            android:windowSoftInputMode="stateHidden|adjustResize" >
+47-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:43:13-67
+48            <intent-filter>
+48-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:48:13-51:29
+49                <action android:name="android.intent.action.MAIN" />
+49-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:49:17-69
+49-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:49:25-66
+50
+51                <category android:name="android.intent.category.LAUNCHER" />
+51-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:50:17-77
+51-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:50:27-74
+52            </intent-filter>
+53        </activity>
+54        <activity
+54-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:54:9-57:59
+55            android:name="com.wayful.Bluetooth.DeviceListActivity"
+55-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:55:13-67
+56            android:configChanges="orientation|keyboardHidden"
+56-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:56:13-63
+57            android:theme="@android:style/Theme.Dialog" />
+57-->E:\AndroidProject\WifiHot-Master\BtClient\myBluetooth\src\main\AndroidManifest.xml:57:13-56
+58    </application>
+59
+60</manifest>

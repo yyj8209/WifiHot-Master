@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:textSize="12sp"
-            android:text="服务器IP" />
+            android:text="服务器" />
         <EditText
             android:id="@+id/ip_EditText"
             android:layout_width="0dp"
@@ -93,7 +93,7 @@
             android:id="@+id/receive_TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="2.5"
             android:text=""
             android:background="@android:color/black"
             android:textColor="@android:color/holo_green_light"/>
@@ -101,8 +101,10 @@
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:layout_weight="2"
+            android:layout_marginLeft="10dp"
             android:id="@+id/lv_client"
             android:background="@android:color/black"
+            android:popupBackground="@android:color/black"
             android:textColor="@color/colorYellow"/>
 
     </LinearLayout>
@@ -130,7 +132,7 @@
                     android:id="@+id/line_chart1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="5"/>
+                    android:layout_weight="6"/>
                 <TextView
                     android:id="@+id/receive_TextView1"
                     android:text="receive_TextView 1"
@@ -148,7 +150,7 @@
                     android:id="@+id/line_chart2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="5"/>
+                    android:layout_weight="6"/>
                 <TextView
                     android:id="@+id/receive_TextView2"
                     android:text="receive_TextView 2"
@@ -157,17 +159,41 @@
                     android:layout_weight="1"
                     android:gravity="center_horizontal"/>
             </LinearLayout>
-            <TextView
-                android:id="@+id/receive_TextView3"
-                android:text="receive_TextView 3"
+            <LinearLayout
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
+                android:layout_rowWeight="1"
+                android:orientation="vertical">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/line_chart3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="6"/>
+                <TextView
+                    android:id="@+id/receive_TextView3"
+                    android:text="receive_TextView 3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"/>
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/receive_TextView4"
-                android:text="receive_TextView 4"
+            <LinearLayout
                 android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
+                android:layout_rowWeight="1"
+                android:orientation="vertical">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/line_chart4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="6"/>
+                <TextView
+                    android:id="@+id/receive_TextView4"
+                    android:text="receive_TextView 4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/receive_TextView5"

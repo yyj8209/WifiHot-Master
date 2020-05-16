@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: org.ujmp:ujmp-core:0.3.0@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.ujmp/ujmp-core/0.3.0/d905a56bcf623358ea93e6d64dda15b3e7fd99a6/ujmp-core-0.3.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.ujmp/ujmp-core/0.3.0/7e581dfe17141d3c8f1a0d7dab7dbd598fc2aa5d/ujmp-core-0.3.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.ujmp/ujmp-core/0.3.0/9017336540b9f6a9408b5341aecc8150b151d8f9/ujmp-core-0.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
