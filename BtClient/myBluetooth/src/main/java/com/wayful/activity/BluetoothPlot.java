@@ -32,6 +32,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -263,6 +264,7 @@ public class BluetoothPlot extends Activity {
 		mTitle.setText(R.string.plot_activity_name);
 		mTitle = (TextView) findViewById(R.id.title_center_text);
 		mTitleWifi = (TextView) findViewById(R.id.title_right_text);
+		mTitleWifi.setGravity(Gravity.RIGHT);
 	}
 
 	private void initData()
@@ -466,12 +468,20 @@ public class BluetoothPlot extends Activity {
 		final Dialog dialog= builder.create();
 		dialog.show();
 		dialog.getWindow().setContentView(view);
+
+		WindowManager.LayoutParams attrs = dialog.getWindow().getAttributes();
+		final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+		attrs.setTitle("通过wifi连接监控端");
+		attrs.width = (int)(260*scale+0.5f);
+		attrs.height =(int)(260*scale+0.5f);
+		dialog.getWindow().setAttributes(attrs);
 		//使editext可以唤起软键盘
 		dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 		cancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Toast.makeText(getApplicationContext(), "取消连接监控端", Toast.LENGTH_SHORT).show();
+				mTitleWifi.setText(myDisconnect());
 				dialog.dismiss();
 			}
 		});
