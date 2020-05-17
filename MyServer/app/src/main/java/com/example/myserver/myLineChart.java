@@ -1,6 +1,7 @@
 package com.example.myserver;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -31,8 +32,8 @@ public class myLineChart {
             Color.rgb(159, 143, 186),
             Color.rgb(233, 197, 23)
     };
-    private byte [] buf;
-    private int len;
+//    private byte [] buf;
+//    private int len;
 
     // 初始化封装为此函数。
     public void initChartSyn(){
@@ -177,9 +178,9 @@ public class myLineChart {
     }
 
     public void refreshLineChart(byte[] readBuf, int datLen){   // datLen = msg.arg1.
+        final int BYTES_PER_ROW = 24;
 //        byte[] readBuf = (byte[]) msg.obj;
-//        int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
-        final int BYTES_PER_ROW = 32;
+        int len = datLen/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
         float [][]CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);
 
         for (int i = 0; i < len; i++) {
@@ -197,8 +198,8 @@ public class myLineChart {
         }
 
         nTotalNum = nTotalNum + len;
-//					Log.e(TAG,"values1长度"+Integer.toString( values1.size() )+
-//							"|nTotalNum值 "+Integer.toString( nTotalNum ));
+					Log.e("myLineChart","values1长度"+Integer.toString( values1.size() )+
+							"|nTotalNum值 "+Integer.toString( nTotalNum ));
         setChartData();
         lineChart.invalidate();
 

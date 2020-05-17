@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../BtClient.iml" filepath="$PROJECT_DIR$/../BtClient.iml" group="BtClient" />
+      <module fileurl="file://$PROJECT_DIR$/BtClient-myBluetooth.iml" filepath="$PROJECT_DIR$/BtClient-myBluetooth.iml" group="BtClient/myBluetooth" />
+      <module fileurl="file://$PROJECT_DIR$/../GitHub-WifiHot-Master-BtClient.iml" filepath="$PROJECT_DIR$/../GitHub-WifiHot-Master-BtClient.iml" group="BtClient" />
+      <module fileurl="file://$PROJECT_DIR$/../WifiHot-Master-BtClient.iml" filepath="$PROJECT_DIR$/../WifiHot-Master-BtClient.iml" group="BtClient" />
       <module fileurl="file://$PROJECT_DIR$/myBluetooth.iml" filepath="$PROJECT_DIR$/myBluetooth.iml" group="BtClient/myBluetooth" />
     </modules>
   </component>

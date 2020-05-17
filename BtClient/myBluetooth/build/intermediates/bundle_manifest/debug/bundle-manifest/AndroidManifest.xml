@@ -39,12 +39,13 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
+
+        <!-- android:configChanges="orientation|keyboardHidden" -->
+        <!-- android:windowSoftInputMode="stateHidden|adjustResize" -->
         <activity
             android:name="com.wayful.activity.BluetoothPlot"
-            android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
-            android:theme="@style/activityTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
+            android:theme="@style/activityTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

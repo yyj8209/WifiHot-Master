@@ -572,7 +572,12 @@ public class BluetoothPlot extends Activity {
 //						Log.e(TAG, "matrixCHData/matrix长度："+matrixCHData.getRowCount()+"/"+
 //												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
 					}
-					send(readBuf);   // 向服务器发送数据。
+                    if(TCPClient.getInstance().isConnect()){
+						send(readBuf);   // 向服务器发送数据。
+						Log.e(TAG,"发送长度-->"+readBuf.length);
+                    }else{
+                    	Log.e(TAG,"TCPClient连接成败");
+					}
 
 					if(bRecognize && bFreeseDisp)
 						return;   // 固定识别时所用的数据。
