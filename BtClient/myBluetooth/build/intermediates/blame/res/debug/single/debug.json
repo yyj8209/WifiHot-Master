@@ -212,6 +212,10 @@
         "source": "E:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\src\\main\\res\\drawable-xhdpi\\curve.png"
     },
     {
+        "merged": "E:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\res\\merged\\debug\\layout-land_activity_bluetooth_plot_layout.xml.flat",
+        "source": "E:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\src\\main\\res\\layout-land\\activity_bluetooth_plot_layout.xml"
+    },
+    {
         "merged": "E:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\res\\merged\\debug\\drawable_bg_login_button_default.xml.flat",
         "source": "E:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\src\\main\\res\\drawable\\bg_login_button_default.xml"
     },

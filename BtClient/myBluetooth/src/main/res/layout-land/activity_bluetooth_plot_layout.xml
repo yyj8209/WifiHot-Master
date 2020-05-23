@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e6e3e3" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/layout1">
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/app_incon_bluetooth1" />
+
+        <TextView
+            android:id="@+id/title_left_text"
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:textColor="#fff"
+            />
+        <TextView
+            android:id="@+id/title_center_text"
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="#fff"
+            />
+        <TextView
+            android:id="@+id/title_right_text"
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="未连接"
+            android:textColor="#fff"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:background="@color/layout2">
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/butto"
+                android:text="@string/search"
+                android:textColor="@color/layout1"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/discoverable1"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/butto"
+                android:text="@string/discoverable1"
+                android:textColor="@color/layout1"
+                android:textStyle="bold"
+                android:textSize="15dp" />
+
+            <Switch
+                android:id="@+id/data_source"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:splitTrack="false"
+                android:switchMinWidth="80dp"
+                android:textColor="#FFF"
+                android:textOff="@string/ds_mechine"
+                android:textOn="@string/ds_file"
+                android:textStyle="bold"
+                android:thumb="@drawable/bg_login_button_press"
+                android:track="@android:drawable/button_onoff_indicator_on"
+                tools:checked="false" />
+
+            <CheckBox
+                android:id="@+id/recognize"
+                style="@style/checkboxsy"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/butto"
+                android:checked="true"
+                android:text="@string/realtime_reco"
+                android:textColor="@color/layout2"
+                android:textStyle="bold"
+                android:textSize="15dp" />
+
+            <Button
+                android:id="@+id/start_stop"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/butto"
+                android:text="@string/acqu_data"
+                android:textColor="@color/layout2"
+                android:textStyle="bold"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/reco_res"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/butto"
+                android:gravity="center"
+                android:text="未识别"
+                android:textColor="@color/layout2"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/line_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -23,6 +23,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -71,6 +72,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import org.ujmp.core.DenseMatrix;
@@ -146,6 +148,7 @@ public class BluetoothPlot extends Activity {
 	private BluetoothChatService mChatService = null;
 	// 1、直采的数据，每组32个字节；2、保存的dat文件，每组24字节。
     public int BYTES_PER_ROW = 32;    //
+	private int TotalLen = 0;
 
 	private String ip = "";
 	private String port = "0";
@@ -157,10 +160,15 @@ public class BluetoothPlot extends Activity {
 		if (D)
 			Log.e(TAG, "+++ ON CREATE +++");
 		// 设置窗口布局
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+//		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);    // 设置全屏模式
 		setContentView(R.layout.activity_bluetooth_plot_layout);
-		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
-				R.layout.custom_title);
+//		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+
+//		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
+//				R.layout.custom_title);
 		//布局控件初始化函数，注册相关监听器
 		initUI();
 		// 获取本地蓝牙适配器
@@ -574,10 +582,14 @@ public class BluetoothPlot extends Activity {
 					}
                     if(TCPClient.getInstance().isConnect()){
 						send(readBuf);   // 向服务器发送数据。
-						Log.e(TAG,"发送长度-->"+readBuf.length);
+//						Log.e(TAG,"发送长度-->"+readBuf.length);
                     }else{
-                    	Log.e(TAG,"TCPClient连接成败");
+//                    	Log.e(TAG,"TCPClient连接成败");
 					}
+
+					TotalLen += msg.arg1;
+                    Log.e(TAG_D,"接收数据总长度-->"+TotalLen);
+                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
 					if(bRecognize && bFreeseDisp)
 						return;   // 固定识别时所用的数据。
@@ -597,7 +609,7 @@ public class BluetoothPlot extends Activity {
 					}
 
 					nTotalNum = nTotalNum + len;
-//					Log.e(TAG,"values1长度"+Integer.toString( values1.size() )+
+//					Log.e(TAG_D,"values1长度"+Integer.toString( values1.size() )+
 //							"|nTotalNum值 "+Integer.toString( nTotalNum ));
 					setChartData();
 					lineChart.invalidate();
