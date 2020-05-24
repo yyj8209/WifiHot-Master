@@ -197,7 +197,7 @@ public class myLineChart {
             }
         }
 
-//        nTotalNum = nTotalNum + len;
+        nTotalNum = nTotalNum + len;
 //					Log.e("myLineChart","values1长度"+Integer.toString( values1.size() )+
 //							"|nTotalNum值 "+Integer.toString( nTotalNum ));
         setChartData();

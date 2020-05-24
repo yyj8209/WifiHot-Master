@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "E:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v18\\values-v18.xml",
+            "outputFile": "E:\\AndroidProject\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v18\\values-v18.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\yyj82\\.gradle\\caches\\transforms-2\\files-2.1\\3be6e2b298f7ce6814fc7adf97858a54\\appcompat-v7-27.1.1\\res\\values-v18\\values-v18.xml",
+                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-2\\files-2.1\\3be6e2b298f7ce6814fc7adf97858a54\\appcompat-v7-27.1.1\\res\\values-v18\\values-v18.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

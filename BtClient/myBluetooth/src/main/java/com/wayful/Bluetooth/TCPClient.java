@@ -78,7 +78,7 @@ public class TCPClient {
             while (isConnect() && !isStop && !isInterrupted()){
                 int size;
                 try{
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[1536];
                     if(inputStream == null)  return;
                     size = inputStream.read(buffer);
                     if(size>0){
@@ -169,7 +169,7 @@ public class TCPClient {
                 try {
                     if (outputStream != null) {
                         outputStream.write(mBuffer);
-                        Log.d(TAG_D,new String(mBuffer,0,mBuffer.length));
+//                        Log.d(TAG_D,new String(mBuffer,0,mBuffer.length));
 //                        outputStream.flush();
                     }
                 } catch (IOException e) {

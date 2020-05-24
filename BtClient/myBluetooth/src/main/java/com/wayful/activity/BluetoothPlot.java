@@ -571,7 +571,7 @@ public class BluetoothPlot extends Activity {
 
                     break;
                 case MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
+                    final byte[] readBuf = (byte[]) msg.obj;
                     int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
                     float [][]CHData = Data_syn.bytesToFloat(readBuf, msg.arg1, BYTES_PER_ROW);
                     if(bRecognize) {
@@ -580,16 +580,10 @@ public class BluetoothPlot extends Activity {
 //						Log.e(TAG, "matrixCHData/matrix长度："+matrixCHData.getRowCount()+"/"+
 //												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
 					}
-                    if(TCPClient.getInstance().isConnect()){
-						send(readBuf);   // 向服务器发送数据。
-//						Log.e(TAG,"发送长度-->"+readBuf.length);
-                    }else{
-//                    	Log.e(TAG,"TCPClient连接成败");
-					}
 
-					TotalLen += msg.arg1;
-                    Log.e(TAG_D,"接收数据总长度-->"+TotalLen);
-                    Log.e(TAG_D, Arrays.deepToString(CHData));
+//					TotalLen += msg.arg1;
+//                    Log.e(TAG_D,"接收数据总长度-->"+TotalLen);
+//                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
 					if(bRecognize && bFreeseDisp)
 						return;   // 固定识别时所用的数据。
@@ -614,7 +608,16 @@ public class BluetoothPlot extends Activity {
 					setChartData();
 					lineChart.invalidate();
 
-                    break;
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							if(TCPClient.getInstance().isConnect()){
+								send(readBuf);   // 向服务器发送数据。
+							}
+						}
+					}).start();
+
+					break;
                 case MESSAGE_DEVICE_NAME:
                     // 保存已连接设备的名称
                     mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
@@ -995,8 +998,8 @@ public class BluetoothPlot extends Activity {
 			byte[] data = new byte[size];
 			System.arraycopy(buffer, 0, data, 0, size);
 
-			final String oxValue = new String(buffer,0,size); // data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
-			Log.d(TAG_D,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
+//			final String oxValue = new String(buffer,0,size); // data.toString(); //String.valueOf(data); // Arrays.toString(data);  // HexUtil.Byte2Ox(data));
+//			Log.d(TAG_D,"onDataReceive requestCode = "+requestCode + ", content = "+oxValue);
 
 //			tv_receive.setText( oxValue + "\n");
 
