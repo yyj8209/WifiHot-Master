@@ -10,82 +10,73 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:gravity="center_vertical"
+        android:background="@color/layout1"
         android:id="@+id/server_ip"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/ip_TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:textSize="12sp"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:textSize="14sp"
             android:text="服务器" />
         <EditText
             android:id="@+id/ip_EditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:textSize="12sp"
             android:text=""
+            android:textColor="#FFF"
             android:enabled="false"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:textSize="12sp"
+            android:layout_weight="0.7"
+            android:textSize="14sp"
             android:text="端口" />
         <!-- 端口号 -->
         <EditText
             android:id="@+id/port_EditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:textSize="12sp"
+            android:layout_weight="1"
+            android:textSize="14sp"
             android:text="8080" />
 
         <Button
             android:id="@+id/start_button"
-            android:layout_width="73dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="fill_horizontal|center_horizontal"
+            android:gravity="center"
             android:text="启动服务"
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/send_button"
-            android:layout_width="62dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:text="发送消息"
+            android:visibility="gone"
             android:enabled="false"
-            android:textSize="12sp" />
-    </LinearLayout>
+            android:textSize="14sp" />
 
-    <!-- 发送的消息 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/client_info"
-        android:layout_below="@id/server_ip"
-        android:gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:orientation="horizontal">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="客户数量"
-            android:textSize="12sp" />
+            android:text="客户数"
+            android:textSize="14sp" />
         <!-- Client Number -->
         <EditText
             android:id="@+id/client_num_TextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_weight="0.8"
             android:enabled="false"
             android:gravity="center_horizontal"
             android:text="0"/>
@@ -95,6 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2.5"
             android:text=""
+            android:textSize="12sp"
             android:background="@android:color/black"
             android:textColor="@android:color/holo_green_light"/>
         <Spinner
@@ -113,8 +105,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/client_info"
-        android:layout_marginTop="10dp"
+        android:layout_below="@id/server_ip"
+        android:layout_marginTop="0dp"
         android:orientation="horizontal">
 
         <GridLayout
@@ -127,12 +119,13 @@
             <LinearLayout
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
+                android:background="@drawable/line_border"
                 android:orientation="vertical">
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/line_chart1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="6"/>
+                    android:layout_weight="8"/>
                 <TextView
                     android:id="@+id/receive_TextView1"
                     android:text="receive_TextView 1"
@@ -145,6 +138,7 @@
             <LinearLayout
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
+                android:background="@drawable/line_border"
                 android:orientation="vertical">
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/line_chart2"

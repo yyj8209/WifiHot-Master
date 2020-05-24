@@ -261,13 +261,7 @@ public class MainActivity extends Activity {
 //                        ClientMap.remove(userIP2SocketBean(ClientMap,getClientIpAddress(socket)));
 //                        Log.d(TAG_D,"当前客户端数量："+ClientMap.size());
                         removeClient(CurrentClientIP);    // 更新 List
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                receiveTextView.setText(CurrentClientIP+" 退出");
-                                clientNumEditText.setText( String.valueOf(ClientList.size()));
-                            }
-                        });
+
 //                        int scrollAmount = receiveTextView.getLayout().getLineTop(receiveTextView.getLineCount())
 //                                - receiveTextView.getHeight();
 //                        if (scrollAmount > 0)
@@ -279,21 +273,21 @@ public class MainActivity extends Activity {
                         os.close();
                         socket.close();
                     }else{
-                        runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                textView[getClientIndex(CurrentClientIP)].setText(CurrentClientIP);
-                                mylinechart[getClientIndex(CurrentClient)].refreshLineChart(buf,len);
-                            }
-                        });
+//                        runOnUiThread(new Runnable()
+//                        {
+//                            @Override
+//                            public void run()
+//                            {
+//                                textView[getClientIndex(CurrentClientIP)].setText(CurrentClientIP);
+//                                mylinechart[getClientIndex(CurrentClient)].refreshLineChart(buf,len);
+//                            }
+//                        });
 
-//                        Message message = Message.obtain();
-//                        message.what = REFRESH;
-////                        message.arg1 = Integer.parseInt(CurrentClientIP);
-//                        message.obj = CurrentClientIP;
-//                        handler.sendMessage(message);
+                        Message message = Message.obtain();
+                        message.what = REFRESH;
+                        MsgFormat msgFormat = new MsgFormat(CurrentClientIP,buf,len);
+                        message.obj = msgFormat;
+                        handler.sendMessage(message);
                     }
                 }
             }
@@ -312,17 +306,17 @@ public class MainActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {  //这个是发送过来的消息
             // 处理从子线程发送过来的消息
-            int arg1 = msg.arg1;  //获取消息携带的属性值
             int what = msg.what;
-            Object result = msg.obj;
+            MsgFormat msgFormat = (MsgFormat)msg.obj;
             switch (what){
                 case CLIENT_LOGIN:
-                    Log.d(TAG_D,"消息处理：用户接入" + result.toString());
+                    Log.d(TAG_D,"消息处理：用户接入" + msgFormat.ip);
                 case REFRESH:
-                    Log.d(TAG_D,"消息处理：处理数据" + result.toString());
-                    Toast.makeText(getApplicationContext(),result.toString(),Toast.LENGTH_LONG).show();
+                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
+                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len);
+                    Log.d(TAG_D,"消息处理：处理数据" + msgFormat.toString());
                 case CLIENT_LOGOUT:
-                    Log.d(TAG_D,"消息处理：用户退出" + result.toString());
+                    Log.d(TAG_D,"消息处理：用户退出" + msgFormat.ip);
             }
 //            Bundle bundle = msg.getData(); // 用来获取消息里面的bundle数据
         };
