@@ -32,6 +32,7 @@ public class TCPClient {
     private InputStream inputStream;
     private SocketThread socketThead;
     private boolean isStop = false;
+    private static final int BUF_SIZE = 1536*8;
 
     private class SocketThread extends Thread {
         private String ip;
@@ -78,7 +79,7 @@ public class TCPClient {
             while (isConnect() && !isStop && !isInterrupted()){
                 int size;
                 try{
-                    byte[] buffer = new byte[1536];
+                    byte[] buffer = new byte[BUF_SIZE];
                     if(inputStream == null)  return;
                     size = inputStream.read(buffer);
                     if(size>0){

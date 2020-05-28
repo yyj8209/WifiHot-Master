@@ -52,7 +52,8 @@ import androidx.annotation.UiThread;
 
 public class MainActivity extends Activity {
 
-    public static final int MAXCLIENT = 8;
+    public static final int MAXCLIENT = 1;
+    public static final int BUF_SIZE = 1536*8;
     public static final int CLIENT_LOGIN = 1;
     public static final int REFRESH = 2;
     public static final int CLIENT_LOGOUT = 3;
@@ -130,22 +131,22 @@ public class MainActivity extends Activity {
 
 
         textView[0] = findViewById(R.id.receive_TextView1);
-        textView[1] = findViewById(R.id.receive_TextView2);
-        textView[2] = findViewById(R.id.receive_TextView3);
-        textView[3] = findViewById(R.id.receive_TextView4);
-        textView[4] = findViewById(R.id.receive_TextView5);
-        textView[5] = findViewById(R.id.receive_TextView6);
-        textView[6] = findViewById(R.id.receive_TextView7);
-        textView[7] = findViewById(R.id.receive_TextView8);
+//        textView[1] = findViewById(R.id.receive_TextView2);
+//        textView[2] = findViewById(R.id.receive_TextView3);
+//        textView[3] = findViewById(R.id.receive_TextView4);
+//        textView[4] = findViewById(R.id.receive_TextView5);
+//        textView[5] = findViewById(R.id.receive_TextView6);
+//        textView[6] = findViewById(R.id.receive_TextView7);
+//        textView[7] = findViewById(R.id.receive_TextView8);
 
         lineChart[0] = findViewById(R.id.line_chart1);
-        lineChart[1] = findViewById(R.id.line_chart2);
-        lineChart[2] = findViewById(R.id.line_chart3);
-        lineChart[3] = findViewById(R.id.line_chart4);
-        lineChart[4] = findViewById(R.id.line_chart1);
-        lineChart[5] = findViewById(R.id.line_chart1);
-        lineChart[6] = findViewById(R.id.line_chart1);
-        lineChart[7] = findViewById(R.id.line_chart1);
+//        lineChart[1] = findViewById(R.id.line_chart2);
+//        lineChart[2] = findViewById(R.id.line_chart3);
+//        lineChart[3] = findViewById(R.id.line_chart4);
+//        lineChart[4] = findViewById(R.id.line_chart1);
+//        lineChart[5] = findViewById(R.id.line_chart1);
+//        lineChart[6] = findViewById(R.id.line_chart1);
+//        lineChart[7] = findViewById(R.id.line_chart1);
         for(int i=0; i<MAXCLIENT; i++){
             mylinechart[i] = new myLineChart(lineChart[i]);
             mylinechart[i].initChartSyn();
@@ -182,14 +183,12 @@ public class MainActivity extends Activity {
                             ClientList.add(ClientMap);    // 更新 List
                             ClientMapList.add(ClientMap);     // 
                             updateListView();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    receiveTextView.setText( CurrentClient+" 接入");
-                                    clientNumEditText.setText( String.valueOf(ClientList.size()));
-                                }
-                            });
-//                            sendMsg(CurrentClient,CurrentClient);
+
+                            Message message = Message.obtain();
+                            message.what = CLIENT_LOGIN;
+                            MsgFormat msgFormat = new MsgFormat(CurrentClient,null,0);
+                            message.obj = msgFormat;
+                            handler.sendMessage(message);
                             //启动接收线程
 //                            Log.d(TAG_D, "客户端数量：" + ClientMap.size());
 //                            int scrollAmount = receiveTextView.getLayout().getLineTop(receiveTextView.getLineCount())
@@ -248,13 +247,13 @@ public class MainActivity extends Activity {
             try
             {
                 while(true){
-                    final byte[] buf = new byte[1024];
+                    final byte[] buf = new byte[BUF_SIZE];
                     final InputStream is = socket.getInputStream();
                     final OutputStream os = socket.getOutputStream();   // 需要和线程对应起来
                     final int len = is.read(buf);
                     final String StrRecv = new String(buf,0,len);
                     final String CurrentClientIP = getClientIpAddress(socket);
-                    Log.d(TAG_D,"接收到来自"+CurrentClientIP+"的信息："+StrRecv);
+//                    Log.d(TAG_D,"接收到来自"+CurrentClientIP+"的信息："+StrRecv);
                     if(StrRecv.toLowerCase().contains("disconnect")){
 //                        ClientMap.remove(CurrentClientIP);   // 这种删除方式先存疑   2020.05.05
 //                        ClientList.remove(getClientIpAddress(socket));    // 更新 List
@@ -310,11 +309,15 @@ public class MainActivity extends Activity {
             MsgFormat msgFormat = (MsgFormat)msg.obj;
             switch (what){
                 case CLIENT_LOGIN:
+                    receiveTextView.setText( CurrentClient+" 接入");
+                    clientNumEditText.setText( String.valueOf(ClientList.size()));
                     Log.d(TAG_D,"消息处理：用户接入" + msgFormat.ip);
                 case REFRESH:
-                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
-                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len);
-                    Log.d(TAG_D,"消息处理：处理数据" + msgFormat.toString());
+                    textView[0].setText(msgFormat.ip);
+//                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
+//                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len);
+                    mylinechart[0].refreshLineChart(msgFormat.data,msgFormat.len);
+                    Log.d(TAG_D,"消息处理：处理数据" + msgFormat.len);
                 case CLIENT_LOGOUT:
                     Log.d(TAG_D,"消息处理：用户退出" + msgFormat.ip);
             }

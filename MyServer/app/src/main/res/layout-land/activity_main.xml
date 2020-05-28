@@ -107,111 +107,124 @@
         android:layout_height="match_parent"
         android:layout_below="@id/server_ip"
         android:layout_marginTop="0dp"
-        android:orientation="horizontal">
-
-        <GridLayout
+        android:orientation="vertical">
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/line_chart1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:columnCount="4"
-            android:rowCount="2">
+            android:layout_height="0dp"
+            android:layout_weight="8"/>
+        <TextView
+            android:id="@+id/receive_TextView1"
+            android:text="receive_TextView 1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"/>
 
-            <LinearLayout
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:background="@drawable/line_border"
-                android:orientation="vertical">
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/line_chart1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="8"/>
-                <TextView
-                    android:id="@+id/receive_TextView1"
-                    android:text="receive_TextView 1"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"/>
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:background="@drawable/line_border"
-                android:orientation="vertical">
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/line_chart2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="6"/>
-                <TextView
-                    android:id="@+id/receive_TextView2"
-                    android:text="receive_TextView 2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:orientation="vertical">
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/line_chart3"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="6"/>
-                <TextView
-                    android:id="@+id/receive_TextView3"
-                    android:text="receive_TextView 3"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"/>
-            </LinearLayout>
+<!--        <GridLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="2"-->
+<!--            android:columnCount="4"-->
+<!--            android:rowCount="2">-->
 
-            <LinearLayout
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:orientation="vertical">
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/line_chart4"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="6"/>
-                <TextView
-                    android:id="@+id/receive_TextView4"
-                    android:text="receive_TextView 4"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"/>
-            </LinearLayout>
+<!--            <LinearLayout-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"-->
+<!--                android:background="@drawable/line_border"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.github.mikephil.charting.charts.LineChart-->
+<!--                    android:id="@+id/line_chart1"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="8"/>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/receive_TextView1"-->
+<!--                    android:text="receive_TextView 1"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="center_horizontal"/>-->
+<!--            </LinearLayout>-->
 
-            <TextView
-                android:id="@+id/receive_TextView5"
-                android:text="receive_TextView 5"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
+<!--            <LinearLayout-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"-->
+<!--                android:background="@drawable/line_border"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.github.mikephil.charting.charts.LineChart-->
+<!--                    android:id="@+id/line_chart2"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="6"/>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/receive_TextView2"-->
+<!--                    android:text="receive_TextView 2"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="center_horizontal"/>-->
+<!--            </LinearLayout>-->
+<!--            <LinearLayout-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.github.mikephil.charting.charts.LineChart-->
+<!--                    android:id="@+id/line_chart3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="6"/>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/receive_TextView3"-->
+<!--                    android:text="receive_TextView 3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="center_horizontal"/>-->
+<!--            </LinearLayout>-->
 
-            <TextView
-                android:id="@+id/receive_TextView6"
-                android:text="receive_TextView 6"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
+<!--            <LinearLayout-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.github.mikephil.charting.charts.LineChart-->
+<!--                    android:id="@+id/line_chart4"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="6"/>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/receive_TextView4"-->
+<!--                    android:text="receive_TextView 4"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="center_horizontal"/>-->
+<!--            </LinearLayout>-->
 
-            <TextView
-                android:id="@+id/receive_TextView7"
-                android:text="receive_TextView 7"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
-            <TextView
-                android:id="@+id/receive_TextView8"
-                android:text="receive_TextView 8"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"/>
-        </GridLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/receive_TextView5"-->
+<!--                android:text="receive_TextView 5"-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"/>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/receive_TextView6"-->
+<!--                android:text="receive_TextView 6"-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"/>-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/receive_TextView7"-->
+<!--                android:text="receive_TextView 7"-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/receive_TextView8"-->
+<!--                android:text="receive_TextView 8"-->
+<!--                android:layout_columnWeight="1"-->
+<!--                android:layout_rowWeight="1"/>-->
+<!--        </GridLayout>-->
     </LinearLayout>
 
 </RelativeLayout >
