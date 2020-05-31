@@ -24,7 +24,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -53,7 +55,7 @@ import androidx.annotation.UiThread;
 public class MainActivity extends Activity {
 
     public static final int MAXCLIENT = 1;
-    public static final int BUF_SIZE = 1536*8;
+    public static final int BUF_SIZE = 1440;
     public static final int CLIENT_LOGIN = 1;
     public static final int REFRESH = 2;
     public static final int CLIENT_LOGOUT = 3;
@@ -67,6 +69,8 @@ public class MainActivity extends Activity {
     private Button startButton;//发送按钮
     private EditText portEditText, ipEditText, clientNumEditText;//端口号和IP
     private TextView  receiveTextView;//接收消息框
+    private TextView mContextMenu;   // 响应长按“服务器”时，弹出菜单。
+    private int BYTES_PER_ROW = 32;  // 真机32，文件数据24.
     private Button sendButton;//发送按钮
     private Spinner spinner;
 //    InputStream inputstream;//创建输入数据流
@@ -107,6 +111,8 @@ public class MainActivity extends Activity {
         spinner = (Spinner) findViewById(R.id.lv_client);
 //        sendEditText.requestFocus();
         receiveTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
+        mContextMenu = (TextView)findViewById(R.id.ip_TextView);   // 响应长按“服务器”时，弹出菜单。
+        registerForContextMenu(mContextMenu);
 
         startButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -154,6 +160,30 @@ public class MainActivity extends Activity {
 
 //        executorService = Executors.newCachedThreadPool();
 
+    }
+    //创建ContextMenu，加载我们之前定义的menu_main.xml布局文件
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+    }
+
+    //当ContextMenu被选中的时候处理具体的响应事件
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_1:
+                BYTES_PER_ROW = 32;
+                Toast.makeText(getApplicationContext(),"真机探扫，帧长度="+BYTES_PER_ROW,Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_2:
+                BYTES_PER_ROW = 24;
+                Toast.makeText(getApplicationContext(),"文件数据，帧长度="+BYTES_PER_ROW,Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                //do nothing
+        }
+        return super.onContextItemSelected(item);
     }
     /**
      * 启动服务按钮监听事件
@@ -284,6 +314,7 @@ public class MainActivity extends Activity {
 
                         Message message = Message.obtain();
                         message.what = REFRESH;
+                        message.arg1 = BYTES_PER_ROW;
                         MsgFormat msgFormat = new MsgFormat(CurrentClientIP,buf,len);
                         message.obj = msgFormat;
                         handler.sendMessage(message);
@@ -316,7 +347,7 @@ public class MainActivity extends Activity {
                     textView[0].setText(msgFormat.ip);
 //                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
 //                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len);
-                    mylinechart[0].refreshLineChart(msgFormat.data,msgFormat.len);
+                    mylinechart[0].refreshLineChart(msgFormat.data,msgFormat.len,BYTES_PER_ROW);
                     Log.d(TAG_D,"消息处理：处理数据" + msgFormat.len);
                 case CLIENT_LOGOUT:
                     Log.d(TAG_D,"消息处理：用户退出" + msgFormat.ip);

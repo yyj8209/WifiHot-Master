@@ -616,7 +616,7 @@ public class BluetoothPlot extends Activity {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							mylinechart.refreshLineChart(readBuf,bufLen);
+							mylinechart.refreshLineChart(readBuf,bufLen,BYTES_PER_ROW);
 						}
 					}).start();
 					TCPClient.getInstance().sendByteCmd(readBuf,1001);
