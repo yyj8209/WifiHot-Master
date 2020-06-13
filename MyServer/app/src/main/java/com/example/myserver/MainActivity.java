@@ -55,7 +55,7 @@ import androidx.annotation.UiThread;
 public class MainActivity extends Activity {
 
     public static final int MAXCLIENT = 1;
-    public static final int BUF_SIZE = 1440;
+    public static final int BUF_SIZE = 1440;     // （24，32）不超过1024的最大值。
     public static final int CLIENT_LOGIN = 1;
     public static final int REFRESH = 2;
     public static final int CLIENT_LOGOUT = 3;
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
     public static final String CLIENT_SOCKET = "CLIENTSOCKET";
 
 //    public static final String Client[] = {"No.1:", "No.2:", "No.3:", "No.4:", "No.5:", "No.6:", "No.7:", "No.8:"};
-//    public int ClientCode = 0;
+    public int numTotal = 0;
     public String CurrentClient;
     public boolean isStart = true;
     public TextView textView[] = new TextView[MAXCLIENT];
@@ -337,20 +337,21 @@ public class MainActivity extends Activity {
         public void handleMessage(Message msg) {  //这个是发送过来的消息
             // 处理从子线程发送过来的消息
             int what = msg.what;
-            MsgFormat msgFormat = (MsgFormat)msg.obj;
+            final MsgFormat msgFormat = (MsgFormat)msg.obj;
             switch (what){
                 case CLIENT_LOGIN:
                     receiveTextView.setText( CurrentClient+" 接入");
                     clientNumEditText.setText( String.valueOf(ClientList.size()));
                     Log.d(TAG_D,"消息处理：用户接入" + msgFormat.ip);
                 case REFRESH:
-                    textView[0].setText(msgFormat.ip);
+                    numTotal += msgFormat.len;
+                    textView[0].setText(msgFormat.ip+"|"+msgFormat.len+"|"+numTotal);
 //                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
 //                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len);
                     mylinechart[0].refreshLineChart(msgFormat.data,msgFormat.len,BYTES_PER_ROW);
-                    Log.d(TAG_D,"消息处理：处理数据" + msgFormat.len);
+                    Log.d(TAG_D,"处理数据" + msgFormat.len);
                 case CLIENT_LOGOUT:
-                    Log.d(TAG_D,"消息处理：用户退出" + msgFormat.ip);
+                    Log.d(TAG_D,"用户退出" + msgFormat.ip);
             }
 //            Bundle bundle = msg.getData(); // 用来获取消息里面的bundle数据
         };

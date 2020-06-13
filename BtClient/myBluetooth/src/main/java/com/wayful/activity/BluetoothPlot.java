@@ -588,8 +588,8 @@ public class BluetoothPlot extends Activity {
 //												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
 					}
 
-//					TotalLen += msg.arg1;
-//                    Log.e(TAG_D,"接收数据总长度-->"+TotalLen);
+					TotalLen += msg.arg1;
+                    Log.d(TAG_D,"当前数据长度-->"+bufLen+"｜ 总长度-->"+TotalLen);
 //                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
 					if(bRecognize && bFreeseDisp)

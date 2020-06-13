@@ -170,7 +170,7 @@ public class TCPClient {
                 try {
                     if (outputStream != null) {
                         outputStream.write(mBuffer);
-//                        Log.d(TAG_D,new String(mBuffer,0,mBuffer.length));
+                        Log.d(TAG_D,("当前转发长度："+mBuffer.length));
 //                        outputStream.flush();
                     }
                 } catch (IOException e) {
