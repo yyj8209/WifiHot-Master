@@ -56,7 +56,7 @@ public class BluetoothChatService {
     public static final int STATE_LISTEN = 1;     // 现在正在侦听传入连接
     public static final int STATE_CONNECTING = 2; // 现在启动传出连接
     public static final int STATE_CONNECTED = 3;  // 现在连接到远程探测器
-    public static final int BUF_SIZE = 1440;  // (24,32)，不超过1024的最大值
+    public static final int BUF_SIZE = 960;  // (24,32)，不超过1024的最大值
 
 
 

@@ -180,7 +180,11 @@ public class myLineChart {
         final int BYTES_PER_ROW = BytesPerRow;
 //        byte[] readBuf = (byte[]) msg.obj;
         int len = datLen/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
-        float [][]CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);
+        float [][]CHData;
+        if(BYTES_PER_ROW==24)
+            CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
+        else
+            CHData = Data_syn.BytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
 
         for (int i = 0; i < len; i++) {
             values1.add(new Entry(nTotalNum + i, A*(float) CHData[0][i]));

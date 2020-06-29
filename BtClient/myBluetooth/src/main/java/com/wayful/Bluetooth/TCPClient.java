@@ -32,7 +32,7 @@ public class TCPClient {
     private InputStream inputStream;
     private SocketThread socketThead;
     private boolean isStop = false;
-    private static final int BUF_SIZE = 1440;
+    private static final int BUF_SIZE = 960;
 
     private class SocketThread extends Thread {
         private String ip;

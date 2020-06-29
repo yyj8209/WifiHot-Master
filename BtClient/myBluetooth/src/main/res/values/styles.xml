@@ -26,8 +26,13 @@
 
     <!-- Activity主题 -->
     <style name="activityTheme"  parent="android:Theme.Translucent">
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
 
+    </style>
+    <!-- Activity主题 -->
+    <style name="activityTheme1"  parent="android:Theme.Translucent">
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>

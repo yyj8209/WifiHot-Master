@@ -68,7 +68,7 @@
 
         <TextView
             android:id="@+id/incount"
-            android:layout_width="41dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="#f7da89"
             android:textColor="#000000"
@@ -85,7 +85,7 @@
 
         <TextView
             android:id="@+id/outcount"
-            android:layout_width="44dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="#a4e7ae"
             android:textColor="#000000"

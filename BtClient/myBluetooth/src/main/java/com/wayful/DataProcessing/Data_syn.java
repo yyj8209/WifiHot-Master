@@ -90,15 +90,15 @@ public class Data_syn {
     }
 
     /**
-     * 将一组16进制数组，按串口格式，转化为三组float信号。
+     * 将一组16进制（字符）数组，按串口格式，转化为三组float信号。
      *
      * @param bytes 串口数据
      * @param a 数据长度
      * @return
      * 分两步实现：1、把16进制的bytes转换为float类型，每组8个数；2、取出其中第2、3、4 即为3个通道值。
      */
-    public static float[][] bytesToFloat(byte[] bytes, int a, int BYTES_PER_ROW) {
-        // 1、把16进制的bytes转换为float类型，每组8个数
+    public static float[][] bytesToFloat(byte[] bytes, int a, int BytesPerRow) {
+        // 1、把16进制的bytes（字符）转换为float类型，每组8个数
         int len = a/4;     // 接收的float 数据个数。
         float []data = new float[len];
         byte[] b ={(byte) 0x00,0x00,0x00,0x00};
@@ -112,14 +112,69 @@ public class Data_syn {
             data[i] = buf.getFloat();
         }
         // 2、取出其中第2、3、4 即为3个通道值。从文件读取数据时，为1、2、3通道。
-        int len1 = a/BYTES_PER_ROW;    // 目前测试：回传数据均为32的整数倍。
-        int BEGIN = (BYTES_PER_ROW -24)/8;   // 32个字节时，第2、3、4数据即为3个通道值。24字节时为1、2、3 数据。
+        int len1 = a/BytesPerRow;    // 目前测试：回传数据均为32的整数倍。
+        int BEGIN = (BytesPerRow -24)/8;   // 32个字节时，第2、3、4数据即为3个通道值。24字节时为1、2、3 数据。
         float [][]result = new float[3][len1];
         for (int i = 0; i < 3; i++) {
             for(int j = 0; j < len1; j++)
-                result[i][j] = data[BEGIN + BYTES_PER_ROW/4*j + i];
+                result[i][j] = data[BEGIN + BytesPerRow/4*j + i];
         }
         return result;
     }
+    /**
+     * 将一组数字数组，按串口格式，转化为三组float信号。
+     *
+     * @param bytes 串口数据
+     * @param a 数据长度
+     * @return
+     * 分两步实现：1、把10进制的bytes转换为float类型，取出其中第2、3、4 即为3个通道值。
+     * 考虑到可能存在的数据丢失，先转换为字符串，检测包头和包尾，丢弃无效数据再转为Float。2020.6.28
+     * 用于探测器的数据直接显示。
+     */
+    public static float[][] BytesToFloat(byte[] bytes, int a, int BytesPerRow) {
+        // 1、把16进制的bytes 转换为字符串，检测包头和包尾,去年污损的包。
+        int Len = bytes.length;
+        String HexString = bytesToHexString(bytes, Len);
+        String Head = "CC000103";
+//        String Tail = "FFFCFFFF";
+        int nHead;
+        int nOldHead = HexString.indexOf(Head);
+        String SubString = HexString;
+        String NewString = "";
+        while(nOldHead+BytesPerRow<Len){
+            SubString = SubString.substring(nOldHead);
+            nHead = HexString.indexOf(Head);
+            int SubLen = nHead - nOldHead;
+            if(SubLen == BytesPerRow)
+            {
+                NewString += SubString.substring(nOldHead,nHead);
+                nOldHead = nHead;
+            }
+        }
 
+        // 2、转换为Float类型。
+        byte[] NewBytes = hexStr2Bytes(NewString);
+        a = NewString.length()/4;
+        int len = a/4;     // 接收的float 数据个数。
+        float []data = new float[len];
+        byte[] b ={(byte) 0x00,0x00,0x00,0x00};
+        for (int i = 0; i < len; i++){
+            for(int j = 0; j < 4; j++)    // 把4 个字节转化为 float 数值。
+                b[j] = NewBytes[4*i + j];
+            ByteBuffer buf=ByteBuffer.allocateDirect(4); //无额外内存的直接缓存
+            buf=buf.order( ByteOrder.LITTLE_ENDIAN); // 默认大端，小端用这行（低位在前）
+            buf.put(b);
+            buf.rewind();
+            data[i] = buf.getFloat();
+        }
+        // 3、取出其中第2、3、4 即为3个通道值。从文件读取数据时，为1、2、3通道。
+        int len1 = a/BytesPerRow;    // 目前测试：回传数据均为32的整数倍。
+        int BEGIN = (BytesPerRow -24)/8;   // 32个字节时，第2、3、4数据即为3个通道值。24字节时为1、2、3 数据。
+        float [][]result = new float[3][len1];
+        for (int i = 0; i < 3; i++) {
+            for(int j = 0; j < len1; j++)
+                result[i][j] = data[BEGIN + BytesPerRow/4*j + i];
+        }
+        return result;
+    }
 }

@@ -1707,8 +1707,11 @@
     </style><style name="checkboxsy" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/checkboxsytle</item>
     </style><style name="activityTheme" parent="android:Theme.Translucent">
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
 
+    </style><style name="activityTheme1" parent="android:Theme.Translucent">
+        <item name="android:windowIsTranslucent">true</item>
     </style></file><file path="E:\GitHub\WifiHot-Master\BtClient\myBluetooth\src\main\res\values\styles.xml.xml" qualifiers=""><style name="MyCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/checkbox_style</item>
     </style></file></source><source path="E:\GitHub\WifiHot-Master\BtClient\myBluetooth\build\generated\res\rs\debug"/><source path="E:\GitHub\WifiHot-Master\BtClient\myBluetooth\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="E:\GitHub\WifiHot-Master\BtClient\myBluetooth\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="E:\GitHub\WifiHot-Master\BtClient\myBluetooth\src\debug\res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="AlertDialog"><attr name="android:layout"/><attr format="reference" name="buttonPanelSideLayout"/><attr format="reference" name="listLayout"/><attr format="reference" name="multiChoiceItemLayout"/><attr format="reference" name="singleChoiceItemLayout"/><attr format="reference" name="listItemLayout"/><attr format="boolean" name="showTitle"/><attr format="dimension" name="buttonIconDimen"/></declare-styleable><declare-styleable name="AppCompatSeekBar"><attr name="android:thumb"/><attr format="reference" name="tickMark"/><attr format="color" name="tickMarkTint"/><attr name="tickMarkTintMode">

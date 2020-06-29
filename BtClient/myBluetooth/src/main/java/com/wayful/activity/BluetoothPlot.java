@@ -578,9 +578,13 @@ public class BluetoothPlot extends Activity {
                     break;
                 case MESSAGE_READ:
                     final byte[] readBuf = (byte[]) msg.obj;
-                    final int bufLen = msg.arg1;
+                    final int bufLen = readBuf.length; // msg.arg1;
 //                    int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
-                    float [][]CHData = Data_syn.bytesToFloat(readBuf, msg.arg1, BYTES_PER_ROW);
+//                    float [][]CHData;
+//                    if(BYTES_PER_ROW==24)
+//                        CHData = Data_syn.bytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
+//                    else
+//                        CHData = Data_syn.BytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
                     if(bRecognize) {
 //                        Matrix matrix = DenseMatrix.Factory.importFromArray( CHData );
 //						matrixCHData = matrixCHData.appendHorizontally( Calculation.Ret.LINK, matrix.times( A ) );
@@ -588,7 +592,7 @@ public class BluetoothPlot extends Activity {
 //												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
 					}
 
-					TotalLen += msg.arg1;
+					TotalLen += readBuf.length; // msg.arg1;
                     Log.d(TAG_D,"当前数据长度-->"+bufLen+"｜ 总长度-->"+TotalLen);
 //                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
