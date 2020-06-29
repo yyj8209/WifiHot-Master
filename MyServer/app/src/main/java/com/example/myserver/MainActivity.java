@@ -347,7 +347,7 @@ public class MainActivity extends Activity {
                     numTotal += msgFormat.len;
                     textView[0].setText(msgFormat.ip+"|"+msgFormat.len+"|"+numTotal);
 //                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
-//                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len);
+//                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len,BYTES_PER_ROW);
                     mylinechart[0].refreshLineChart(msgFormat.data,msgFormat.len,BYTES_PER_ROW);
                     Log.d(TAG_D,"处理数据" + msgFormat.len);
                 case CLIENT_LOGOUT:
