@@ -136,45 +136,26 @@ public class Data_syn {
         int Len = bytes.length;
         String HexString = bytesToHexString(bytes, Len);
         String Head = "CC000103";
-//        String Tail = "FFFCFFFF";
-        int nHead;
-        int nOldHead = HexString.indexOf(Head);
-        String SubString = HexString;
-        String NewString = "";
-        while(nOldHead+BytesPerRow<Len){
-            SubString = SubString.substring(nOldHead);
-            nHead = HexString.indexOf(Head);
-            int SubLen = nHead - nOldHead;
-            if(SubLen == BytesPerRow)
-            {
-                NewString += SubString.substring(nOldHead,nHead);
-                nOldHead = nHead;
-            }
+        String StringExHead = "";
+        int nTokensExHead = 2*BytesPerRow - Head.length();
+        String[] sTokens = HexString.split(Head);
+        for(String s:sTokens){
+            if(s.length() == nTokensExHead)
+                StringExHead += s;
+        }
+        String Tail = "FFFCFFFF";
+        String StringExTail = "";
+        int nTokensExTail = nTokensExHead - Tail.length();
+        String[] sTokensExTail = StringExHead.split(Tail);
+        for(String s:sTokensExTail){
+            if(s.length() == nTokensExTail)
+                StringExTail += s;
         }
 
         // 2、转换为Float类型。
-        byte[] NewBytes = hexStr2Bytes(NewString);
-        a = NewString.length()/4;
-        int len = a/4;     // 接收的float 数据个数。
-        float []data = new float[len];
-        byte[] b ={(byte) 0x00,0x00,0x00,0x00};
-        for (int i = 0; i < len; i++){
-            for(int j = 0; j < 4; j++)    // 把4 个字节转化为 float 数值。
-                b[j] = NewBytes[4*i + j];
-            ByteBuffer buf=ByteBuffer.allocateDirect(4); //无额外内存的直接缓存
-            buf=buf.order( ByteOrder.LITTLE_ENDIAN); // 默认大端，小端用这行（低位在前）
-            buf.put(b);
-            buf.rewind();
-            data[i] = buf.getFloat();
-        }
-        // 3、取出其中第2、3、4 即为3个通道值。从文件读取数据时，为1、2、3通道。
-        int len1 = a/BytesPerRow;    // 目前测试：回传数据均为32的整数倍。
-        int BEGIN = (BytesPerRow -24)/8;   // 32个字节时，第2、3、4数据即为3个通道值。24字节时为1、2、3 数据。
-        float [][]result = new float[3][len1];
-        for (int i = 0; i < 3; i++) {
-            for(int j = 0; j < len1; j++)
-                result[i][j] = data[BEGIN + BytesPerRow/4*j + i];
-        }
+        byte[] NewBytes = hexStr2Bytes(StringExTail);
+        float [][]result = bytesToFloat(NewBytes, NewBytes.length, BytesPerRow-8);
         return result;
+
     }
 }

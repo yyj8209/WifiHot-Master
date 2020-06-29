@@ -578,6 +578,7 @@ public class BluetoothPlot extends Activity {
                     break;
                 case MESSAGE_READ:
                     final byte[] readBuf = (byte[]) msg.obj;
+
                     final int bufLen = readBuf.length; // msg.arg1;
 //                    int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
 //                    float [][]CHData;
@@ -585,6 +586,7 @@ public class BluetoothPlot extends Activity {
 //                        CHData = Data_syn.bytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
 //                    else
 //                        CHData = Data_syn.BytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
+
                     if(bRecognize) {
 //                        Matrix matrix = DenseMatrix.Factory.importFromArray( CHData );
 //						matrixCHData = matrixCHData.appendHorizontally( Calculation.Ret.LINK, matrix.times( A ) );
@@ -593,6 +595,7 @@ public class BluetoothPlot extends Activity {
 					}
 
 					TotalLen += readBuf.length; // msg.arg1;
+
                     Log.d(TAG_D,"当前数据长度-->"+bufLen+"｜ 总长度-->"+TotalLen);
 //                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
@@ -625,14 +628,6 @@ public class BluetoothPlot extends Activity {
 					}).start();
 					TCPClient.getInstance().sendByteCmd(readBuf,1001);
 
-//					new Thread(new Runnable() {
-//						@Override
-//						public void run() {
-//							if(TCPClient.getInstance().isConnect()){
-//								send(readBuf);   // 向服务器发送数据。
-//							}
-//						}
-//					}).start();
 
 					break;
                 case MESSAGE_DEVICE_NAME:
@@ -651,116 +646,6 @@ public class BluetoothPlot extends Activity {
 		}
 	};
 
-//	/**
-//	 * 绘制线图，默认最多绘制三种颜色。所有线均依赖左侧y轴显示。
-//	 *
-//	 * @param lineChart
-//	 * @param xAxisValue x轴的轴
-//	 * @param yXAxisValues y轴的值
-//	 * @param titles 每一个数据系列的标题
-//	 * @param showSetValues 是否在折线上显示数据集的值。true为显示，此时y轴上的数值不可见，否则相反。
-//	 * @param lineColors 线的颜色数组。为null时取默认颜色，此时最多绘制三种颜色。
-//	 */
-//	public static void setLinesChart(LineChart lineChart, List<String> xAxisValue, List<List<Float>> yXAxisValues, List<String> titles, boolean showSetValues, int[] lineColors) {
-//		lineChart.getDescription().setEnabled(false);//设置描述
-//		lineChart.setPinchZoom(true);//设置按比例放缩柱状图
-//
-//		//x坐标轴设置
-//		XAxis xAxis = lineChart.getXAxis();
-//		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//		xAxis.setDrawGridLines(false);
-//		xAxis.setGranularity(1f);
-//		xAxis.setLabelCount(xAxisValue.size());
-//		/*xAxis.setAxisLineWidth(2f);*/
-//
-//		//y轴设置
-//		YAxis leftAxis = lineChart.getAxisLeft();
-//		leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-//		leftAxis.setDrawGridLines(false);
-//		if (showSetValues) {
-//			leftAxis.setDrawLabels(false);//折线上显示值，则不显示坐标轴上的值
-//		}
-//		//leftAxis.setDrawZeroLine(true);
-//		/*leftAxis.setAxisMinimum(0f);*/
-//		/*leftAxis.setAxisLineWidth(2f);*/
-//
-//		lineChart.getAxisRight().setEnabled(false);
-//
-//		//图例设置
-//		Legend legend = lineChart.getLegend();
-//		legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-//		legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-//		legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-//		legend.setDrawInside(false);
-//		legend.setDirection(Legend.LegendDirection.LEFT_TO_RIGHT);
-//		legend.setForm(Legend.LegendForm.LINE);
-//		legend.setTextSize(12f);
-//
-//		//设置折线图数据
-//		setLinesChartData(lineChart, yXAxisValues, titles, showSetValues,lineColors);
-//
-//		lineChart.setExtraOffsets(10, 30, 20, 10);
-//		lineChart.animateX(500);//数据显示动画，从左往右依次显示
-//	}
-//
-//	private static void setLinesChartData(LineChart lineChart, List<List<Float>> yXAxisValues, List<String> titles, boolean showSetValues, int[] lineColors) {
-//
-//		List<List<Entry>> entriesList = new ArrayList<>();
-//		for (int i = 0; i < yXAxisValues.size(); ++i) {
-//			ArrayList<Entry> entries = new ArrayList<>();
-//			for (int j = 0, n = yXAxisValues.get(i).size(); j < n; j++) {
-//				entries.add(new Entry(j, yXAxisValues.get(i).get(j)));
-//			}
-//			entriesList.add(entries);
-//		}
-//
-//		if (lineChart.getData() != null && lineChart.getData().getDataSetCount() > 0) {
-//
-//			for (int i = 0; i < lineChart.getData().getDataSetCount(); ++i) {
-//				LineDataSet set = (LineDataSet) lineChart.getData().getDataSetByIndex(i);
-//				set.setValues(entriesList.get(i));
-//				set.setLabel(titles.get(i));
-//			}
-//
-//			lineChart.getData().notifyDataChanged();
-//			lineChart.notifyDataSetChanged();
-//		} else {
-//			ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-//
-//			for (int i = 0; i < entriesList.size(); ++i) {
-//				LineDataSet set = new LineDataSet(entriesList.get(i), titles.get(i));
-//				if(lineColors!=null){
-//					set.setColor(lineColors[i % entriesList.size()]);
-//					set.setCircleColor(lineColors[i % entriesList.size()]);
-//					set.setCircleColorHole(Color.WHITE);
-//				} else {
-//					set.setColor(LINE_COLORS[i % 3]);
-//					set.setCircleColor(LINE_COLORS[i % 3]);
-//					set.setCircleColorHole(Color.WHITE);
-//				}
-//
-//				if (entriesList.size() == 1) {
-//					set.setDrawFilled(true);
-//				}
-//				dataSets.add(set);
-//			}
-//
-//			LineData data = new LineData(dataSets);
-//			if (showSetValues) {
-//				data.setValueTextSize(10f);
-//				data.setValueFormatter(new IValueFormatter() {
-//					@Override
-//					public String getFormattedValue(float value, Entry entry, int i, ViewPortHandler viewPortHandler) {
-//						return Double.toString(value);
-//					}
-//				});
-//			} else {
-//				data.setDrawValues(false);
-//			}
-//
-//			lineChart.setData(data);
-//		}
-//	}
 
     //返回该Activity回调函数
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
