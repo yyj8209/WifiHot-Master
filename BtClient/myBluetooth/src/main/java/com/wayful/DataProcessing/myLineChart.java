@@ -186,7 +186,8 @@ public class myLineChart {
         else
             CHData = Data_syn.BytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
 
-        for (int i = 0; i < len; i++) {
+        int LenPerReceive = CHData[0].length;
+        for (int i = 0; i < LenPerReceive; i++) {
             values1.add(new Entry(nTotalNum + i, A*(float) CHData[0][i]));
             values2.add(new Entry(nTotalNum + i, A*(float) CHData[1][i]));
             values3.add(new Entry(nTotalNum + i, A*(float) CHData[2][i]));
