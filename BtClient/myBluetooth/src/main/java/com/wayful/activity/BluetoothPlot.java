@@ -128,7 +128,6 @@ public class BluetoothPlot extends Activity {
 	myLineChart mylinechart;
 	ArrayList<Entry> values, values1, values2, values3;
 //	LineDataSet set1,set2,set3;
-	private int nTotalNum;
 
 	private TextView mTitle, mTitleWifi;
 
@@ -154,6 +153,7 @@ public class BluetoothPlot extends Activity {
 
 	private String ip = "";
 	private String port = "0";
+	private long lbegin = System.currentTimeMillis();
 
 
 	@Override
@@ -620,14 +620,17 @@ public class BluetoothPlot extends Activity {
 ////					Log.e(TAG_D,"values1长度"+Integer.toString( values1.size() )+
 ////							"|nTotalNum值 "+Integer.toString( nTotalNum ));
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							mylinechart.refreshLineChart(readBuf,bufLen,BYTES_PER_ROW);
-						}
-					}).start();
+//					new Thread(new Runnable() {
+//						@Override
+//						public void run() {
+//							mylinechart.refreshLineChart(readBuf,bufLen,BYTES_PER_ROW);
+//						}
+//					}).start();
+					long lend = System.currentTimeMillis();
+					Log.d(TAG_D, "Time span"+(lend - lbegin)/1000.0);
+					mylinechart.refreshLineChart(readBuf,bufLen,BYTES_PER_ROW);
 					TCPClient.getInstance().sendByteCmd(readBuf,1001);
-
+					lbegin = lend;
 
 					break;
                 case MESSAGE_DEVICE_NAME:

@@ -1,6 +1,7 @@
 package com.wayful.DataProcessing;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 public class myLineChart {
     private LineChart lineChart;
+    private static final String TAG_D = "DEBUG";
 
     public myLineChart(LineChart lineChart){
         this.lineChart = lineChart;
@@ -183,14 +185,15 @@ public class myLineChart {
         float [][]CHData;
         if(BYTES_PER_ROW==24) {
             CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
-            len = datLen/BYTES_PER_ROW;
+            len = datLen; // 总长度
         }
         else {
             CHData = Data_syn.BytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
-            len = CHData[0].length;
+            len = CHData[0].length*BYTES_PER_ROW; // 总长度
         }
 
-        for (int i = 0; i < len; i++) {
+        int LenPerReceive = CHData[0].length;
+        for (int i = 0; i < LenPerReceive; i++) {
             values1.add(new Entry(nTotalNum + i, A*(float) CHData[0][i]));
             values2.add(new Entry(nTotalNum + i, A*(float) CHData[1][i]));
             values3.add(new Entry(nTotalNum + i, A*(float) CHData[2][i]));
@@ -204,9 +207,10 @@ public class myLineChart {
             }
         }
 
-        nTotalNum = nTotalNum + len;
+        nTotalNum = nTotalNum + LenPerReceive;
 //					Log.e("myLineChart","values1长度"+Integer.toString( values1.size() )+
 //							"|nTotalNum值 "+Integer.toString( nTotalNum ));
+        Log.d(TAG_D,"丢包率："+ (1-(float)len/datLen));
         setChartData();
         lineChart.invalidate();
 
