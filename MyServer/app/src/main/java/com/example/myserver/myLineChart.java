@@ -180,13 +180,26 @@ public class myLineChart {
     public void refreshLineChart(byte[] readBuf, int datLen, int BytesPerRow){   // datLen = msg.arg1.
         final int BYTES_PER_ROW = BytesPerRow;
 //        byte[] readBuf = (byte[]) msg.obj;
-        int len = datLen/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
-        float [][]CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);
+        float [][]CHData;
+        if(BYTES_PER_ROW == 24) {
+            CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
+        }
+        else {
+            CHData = Data_syn.BytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
+        }
 
-        for (int i = 0; i < len; i++) {
-            values1.add(new Entry(nTotalNum + i, A*(float) CHData[0][i]));
-            values2.add(new Entry(nTotalNum + i, A*(float) CHData[1][i]));
-            values3.add(new Entry(nTotalNum + i, A*(float) CHData[2][i]));
+        float A0 = CHData[0][0], DELTA = 100;
+        int k = 0;
+
+        for (int i = 0; i < CHData[0].length; i++) {
+            if(Math.abs(CHData[0][i]-A0) > DELTA){ // 数值突变，看成是数据丢失产生的，舍弃该数据。
+                continue;     // 不放入数组，也就是舍弃该点数据。
+            }else {
+                values1.add(new Entry(nTotalNum + k++, A * (float) CHData[0][i]));
+                values2.add(new Entry(nTotalNum + k, A * (float) CHData[1][i]));
+                values3.add(new Entry(nTotalNum + k, A * (float) CHData[2][i]));
+                A0 = CHData[0][i];
+            }
         }
 
         if (values1.size() - MAX_XRANGE > 0){
@@ -197,12 +210,13 @@ public class myLineChart {
             }
         }
 
-        nTotalNum = nTotalNum + len;
+        nTotalNum = nTotalNum + CHData[0].length;
 //					Log.e("myLineChart","values1长度"+Integer.toString( values1.size() )+
 //							"|nTotalNum值 "+Integer.toString( nTotalNum ));
+//        Log.d(TAG_D,"本帧接收数据：" + readBuf.toString());
+//        Log.d(TAG_D,"丢包率："+ (1-(float)len/datLen));
         setChartData();
         lineChart.invalidate();
-
     }
 
 }

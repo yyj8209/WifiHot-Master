@@ -210,24 +210,24 @@ public class BluetoothPlot extends Activity {
                     BYTES_PER_ROW = 32;
             }
         });
-		realtime_reco.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if(isChecked){
-					start_stop.setBackground(getDrawable( R.drawable.butto ));
-					start_stop.setEnabled( true );
-				}
-				else {
-					start_stop.setBackgroundColor(getResources().getColor(R.color.layout_press,getTheme() ));
-					start_stop.setEnabled( false );
-				}
-			}
-		} );
+//		realtime_reco.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				if(isChecked){
+//					start_stop.setBackground(getDrawable( R.drawable.butto ));
+//					start_stop.setEnabled( true );
+//				}
+//				else {
+//					start_stop.setBackgroundColor(getResources().getColor(R.color.layout_press,getTheme() ));
+//					start_stop.setEnabled( false );
+//				}
+//			}
+//		} );
 		start_stop.setOnClickListener( new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				strStartStop = start_stop.getText().toString();
-				if(strStartStop.contains( "采集" )){
+				if(strStartStop.contains( "开始" )){
 					start_stop.setText( getResources().getString( R.string.reco_data ) );
 					acquData();
 					start_stop.setBackgroundColor(Color.rgb( 248,238,228 ));
@@ -263,12 +263,10 @@ public class BluetoothPlot extends Activity {
 		settings = (Button) findViewById( R.id.settings );
 		aSwitch = (Switch) findViewById(R.id.data_source);
 		//
-		realtime_reco = (CheckBox) findViewById(R.id.recognize);
 		start_stop = (Button) findViewById(R.id.start_stop);
 		reco_res = (TextView) findViewById(R.id.reco_res);
 		strStartStop = getResources().getString( R.string.acqu_data );
 		matrixCHData = DenseMatrix.Factory.emptyMatrix();
-		bRecognize = false;
 		bFreeseDisp = false;
 
 		lineChart = (LineChart) findViewById(R.id.line_chart);
@@ -587,19 +585,13 @@ public class BluetoothPlot extends Activity {
 //                    else
 //                        CHData = Data_syn.BytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
 
-                    if(bRecognize) {
-//                        Matrix matrix = DenseMatrix.Factory.importFromArray( CHData );
-//						matrixCHData = matrixCHData.appendHorizontally( Calculation.Ret.LINK, matrix.times( A ) );
-//						Log.e(TAG, "matrixCHData/matrix长度："+matrixCHData.getRowCount()+"/"+
-//												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
-					}
 
 					TotalLen += readBuf.length; // msg.arg1;
 
                     Log.d(TAG_D,"当前数据长度-->"+bufLen+"｜ 总长度-->"+TotalLen);
 //                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
-					if(bRecognize && bFreeseDisp)
+					if(bFreeseDisp)
 						return;   // 固定识别时所用的数据。
 
 //					for (int i = 0; i < len; i++) {
@@ -747,7 +739,6 @@ public class BluetoothPlot extends Activity {
 	// 开始采集数据用来识别。
 	private void 	acquData(){
 		matrixCHData = DenseMatrix.Factory.emptyMatrix();
-		bRecognize = true;
 		bFreeseDisp = false;
 		String string = "V1(mv):"+  "\n" +
 				"V2(mv):"+  "\n" +
@@ -783,7 +774,6 @@ public class BluetoothPlot extends Activity {
 		lineChart.getDescription().setText(string);
 		lineChart.getDescription().setTextColor(Color.rgb(255,255,255));
 
-		bRecognize = false;
 		bFreeseDisp = true;
 	}
 

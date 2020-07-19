@@ -1,4 +1,6 @@
 package com.wayful.DataProcessing;
+import android.util.Log;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.NumberFormat;
@@ -151,6 +153,7 @@ public class Data_syn {
             if(s.length() == nTokensExTail)
                 StringExTail += s;
         }
+//        Log.d("Debug","本帧输出数据：" + StringExTail);
 
         // 2、转换为Float类型。
         byte[] NewBytes = hexStr2Bytes(StringExTail);

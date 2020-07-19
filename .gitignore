@@ -45,10 +45,12 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
-
+.idea
 \WifiClientDemo\app\build\
 \WiFiServer\app\build\
 \MyServer\app\build\
 \MyClient\app\build\
 \BtClient\app\build\
 \BtClient\myBluetooth\build\
+\BtClient\myBluetooth\.idea\
+\MyServer\.idea\

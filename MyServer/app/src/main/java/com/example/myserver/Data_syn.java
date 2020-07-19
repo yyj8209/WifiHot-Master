@@ -1,4 +1,5 @@
 package com.example.myserver;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.NumberFormat;
@@ -90,15 +91,15 @@ public class Data_syn {
     }
 
     /**
-     * 将一组16进制数组，按串口格式，转化为三组float信号。
+     * 将一组16进制（字符）数组，按串口格式，转化为三组float信号。
      *
      * @param bytes 串口数据
      * @param a 数据长度
      * @return
      * 分两步实现：1、把16进制的bytes转换为float类型，每组8个数；2、取出其中第2、3、4 即为3个通道值。
      */
-    public static float[][] bytesToFloat(byte[] bytes, int a, int BYTES_PER_ROW) {
-        // 1、把16进制的bytes转换为float类型，每组8个数
+    public static float[][] bytesToFloat(byte[] bytes, int a, int BytesPerRow) {
+        // 1、把16进制的bytes（字符）转换为float类型，每组8个数
         int len = a/4;     // 接收的float 数据个数。
         float []data = new float[len];
         byte[] b ={(byte) 0x00,0x00,0x00,0x00};
@@ -112,14 +113,51 @@ public class Data_syn {
             data[i] = buf.getFloat();
         }
         // 2、取出其中第2、3、4 即为3个通道值。从文件读取数据时，为1、2、3通道。
-        int len1 = a/BYTES_PER_ROW;    // 目前测试：回传数据均为32的整数倍。
-        int BEGIN = (BYTES_PER_ROW -24)/8;   // 32个字节时，第2、3、4数据即为3个通道值。24字节时为1、2、3 数据。
+        int len1 = a/BytesPerRow;    // 目前测试：回传数据均为32的整数倍。
+        int BEGIN = (BytesPerRow -24)/8;   // 32个字节时，第2、3、4数据即为3个通道值。24字节时为1、2、3 数据。
         float [][]result = new float[3][len1];
         for (int i = 0; i < 3; i++) {
             for(int j = 0; j < len1; j++)
-                result[i][j] = data[BEGIN + BYTES_PER_ROW/4*j + i];
+                result[i][j] = data[BEGIN + BytesPerRow/4*j + i];
         }
         return result;
     }
+    /**
+     * 将一组数字数组，按串口格式，转化为三组float信号。
+     *
+     * @param bytes 串口数据
+     * @param a 数据长度
+     * @return
+     * 分两步实现：1、把10进制的bytes转换为float类型，取出其中第2、3、4 即为3个通道值。
+     * 考虑到可能存在的数据丢失，先转换为字符串，检测包头和包尾，丢弃无效数据再转为Float。2020.6.28
+     * 用于探测器的数据直接显示。
+     */
+    public static float[][] BytesToFloat(byte[] bytes, int a, int BytesPerRow) {
+        // 1、把16进制的bytes 转换为字符串，检测包头和包尾,去年污损的包。
+        int Len = bytes.length;
+        String HexString = bytesToHexString(bytes, Len);
+        String Head = "CC000103";
+        String StringExHead = "";
+        int nTokensExHead = 2*BytesPerRow - Head.length();
+        String[] sTokens = HexString.split(Head);
+        for(String s:sTokens){
+            if(s.length() == nTokensExHead)
+                StringExHead += s;
+        }
+        String Tail = "FFFCFFFF";
+        String StringExTail = "";
+        int nTokensExTail = nTokensExHead - Tail.length();
+        String[] sTokensExTail = StringExHead.split(Tail);
+        for(String s:sTokensExTail){
+            if(s.length() == nTokensExTail)
+                StringExTail += s;
+        }
+//        Log.d("Debug","本帧输出数据：" + StringExTail);
 
+        // 2、转换为Float类型。
+        byte[] NewBytes = hexStr2Bytes(StringExTail);
+        float [][]result = bytesToFloat(NewBytes, NewBytes.length, BytesPerRow-8);
+        return result;
+
+    }
 }

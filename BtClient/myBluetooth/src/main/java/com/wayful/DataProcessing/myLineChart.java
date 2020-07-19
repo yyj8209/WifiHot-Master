@@ -183,7 +183,7 @@ public class myLineChart {
 //        byte[] readBuf = (byte[]) msg.obj;
         int len = 0;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
         float [][]CHData;
-        if(BYTES_PER_ROW==24) {
+        if(BYTES_PER_ROW == 24) {
             CHData = Data_syn.bytesToFloat(readBuf, datLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
             len = datLen; // 总长度
         }
@@ -192,11 +192,18 @@ public class myLineChart {
             len = CHData[0].length*BYTES_PER_ROW; // 总长度
         }
 
-        int LenPerReceive = CHData[0].length;
-        for (int i = 0; i < LenPerReceive; i++) {
-            values1.add(new Entry(nTotalNum + i, A*(float) CHData[0][i]));
-            values2.add(new Entry(nTotalNum + i, A*(float) CHData[1][i]));
-            values3.add(new Entry(nTotalNum + i, A*(float) CHData[2][i]));
+        float A0 = CHData[0][0], DELTA = 100;
+        int k = 0;
+
+        for (int i = 0; i < CHData[0].length; i++) {
+            if(Math.abs(CHData[0][i]-A0) > DELTA){ // 数值突变，看成是数据丢失产生的，舍弃该数据。
+                continue;     // 不放入数组，也就是舍弃该点数据。
+            }else {
+                values1.add(new Entry(nTotalNum + k++, A * (float) CHData[0][i]));
+                values2.add(new Entry(nTotalNum + k, A * (float) CHData[1][i]));
+                values3.add(new Entry(nTotalNum + k, A * (float) CHData[2][i]));
+                A0 = CHData[0][i];
+            }
         }
 
         if (values1.size() - MAX_XRANGE > 0){
@@ -207,9 +214,10 @@ public class myLineChart {
             }
         }
 
-        nTotalNum = nTotalNum + LenPerReceive;
+        nTotalNum = nTotalNum + CHData[0].length;
 //					Log.e("myLineChart","values1长度"+Integer.toString( values1.size() )+
 //							"|nTotalNum值 "+Integer.toString( nTotalNum ));
+//        Log.d(TAG_D,"本帧接收数据：" + readBuf.toString());
         Log.d(TAG_D,"丢包率："+ (1-(float)len/datLen));
         setChartData();
         lineChart.invalidate();

@@ -55,7 +55,7 @@ import androidx.annotation.UiThread;
 public class MainActivity extends Activity {
 
     public static final int MAXCLIENT = 1;
-    public static final int BUF_SIZE = 1440;     // （24，32）不超过1024的最大值。
+    public static final int BUF_SIZE = 960;     // （24，32）不超过1024的最大值。
     public static final int CLIENT_LOGIN = 1;
     public static final int REFRESH = 2;
     public static final int CLIENT_LOGOUT = 3;
@@ -343,15 +343,20 @@ public class MainActivity extends Activity {
                     receiveTextView.setText( CurrentClient+" 接入");
                     clientNumEditText.setText( String.valueOf(ClientList.size()));
                     Log.d(TAG_D,"消息处理：用户接入" + msgFormat.ip);
+                    break;
                 case REFRESH:
                     numTotal += msgFormat.len;
-                    textView[0].setText(msgFormat.ip+"|"+msgFormat.len+"|"+numTotal);
+                    textView[0].setText("From IP:" + msgFormat.ip);
+//                    textView[0].setText(msgFormat.ip+"|"+msgFormat.len+"|"+numTotal);
 //                    textView[getClientIndex(msgFormat.ip)].setText(msgFormat.ip);
 //                    mylinechart[getClientIndex(msgFormat.ip)].refreshLineChart(msgFormat.data,msgFormat.len,BYTES_PER_ROW);
                     mylinechart[0].refreshLineChart(msgFormat.data,msgFormat.len,BYTES_PER_ROW);
                     Log.d(TAG_D,"处理数据" + msgFormat.len);
+                    break;
                 case CLIENT_LOGOUT:
                     Log.d(TAG_D,"用户退出" + msgFormat.ip);
+                    break;
+                default:
             }
 //            Bundle bundle = msg.getData(); // 用来获取消息里面的bundle数据
         };
