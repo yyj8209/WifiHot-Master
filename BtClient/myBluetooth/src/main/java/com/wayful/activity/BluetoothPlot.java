@@ -88,7 +88,7 @@ public class BluetoothPlot extends Activity {
 	private static final String TAG = "BluetoothPlot";
 	private static final String TAG_D = "DEBUG";
 	private static final boolean D = true;
-//	private static final float A = 5000.0f/32768;
+	private static final float A = 5000.0f/32768;
 //	private static final int MAX_XRANGE = 3000;
     //返回页面标志
 	private boolean exit =false;
@@ -140,7 +140,7 @@ public class BluetoothPlot extends Activity {
 	private String mConnectedDeviceName = null;
 	// 输出流缓冲区
 	private Matrix matrixCHData;    // 存储一次探 扫的数据。
-	private boolean bRecognize, bFreeseDisp;
+	private boolean bRecognize = false, bFreeseDisp = false;
 	private static final String []CATAGORIES = {"大干扰","小干扰","雷","无目标"};
 
 	// 本地蓝牙适配器
@@ -229,6 +229,7 @@ public class BluetoothPlot extends Activity {
 				strStartStop = start_stop.getText().toString();
 				if(strStartStop.contains( "开始" )){
 					start_stop.setText( getResources().getString( R.string.reco_data ) );
+					reco_res.setText( "等待点击<查看结果>");
 					acquData();
 					start_stop.setBackgroundColor(Color.rgb( 248,238,228 ));
 				}
@@ -578,12 +579,12 @@ public class BluetoothPlot extends Activity {
                     final byte[] readBuf = (byte[]) msg.obj;
 
                     final int bufLen = readBuf.length; // msg.arg1;
-//                    int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
-//                    float [][]CHData;
-//                    if(BYTES_PER_ROW==24)
-//                        CHData = Data_syn.bytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
-//                    else
-//                        CHData = Data_syn.BytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
+                    int len = msg.arg1/BYTES_PER_ROW;    // 直采的数据，每组32个字节；保存的dat文件，每组24字节。
+                    float [][]CHData;
+                    if(BYTES_PER_ROW==24)
+                        CHData = Data_syn.bytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 从文件读取数据的情况，24个字节
+                    else
+                        CHData = Data_syn.BytesToFloat(readBuf, bufLen, BYTES_PER_ROW);  // 直采时，数据有头尾各4个字节。
 
 
 					TotalLen += readBuf.length; // msg.arg1;
@@ -591,33 +592,16 @@ public class BluetoothPlot extends Activity {
                     Log.d(TAG_D,"当前数据长度-->"+bufLen+"｜ 总长度-->"+TotalLen);
 //                    Log.e(TAG_D, Arrays.deepToString(CHData));
 
-					if(bFreeseDisp)
-						return;   // 固定识别时所用的数据。
+//					if(bFreeseDisp)
+//						return;   // 固定识别时所用的数据。
 
-//					for (int i = 0; i < len; i++) {
-//						values1.add(new Entry(nTotalNum + i, A*(float) CHData[0][i]));
-//						values2.add(new Entry(nTotalNum + i, A*(float) CHData[1][i]));
-//						values3.add(new Entry(nTotalNum + i, A*(float) CHData[2][i]));
-//					}
-//
-//					if (values1.size() - MAX_XRANGE > 0){
-//						for (int j = 0; j < values1.size()-MAX_XRANGE; j++){
-//							values1.remove( 0 );
-//							values2.remove( 0 );
-//							values3.remove( 0 );
-//						}
-//					}
-//
-//					nTotalNum = nTotalNum + len;
-////					Log.e(TAG_D,"values1长度"+Integer.toString( values1.size() )+
-////							"|nTotalNum值 "+Integer.toString( nTotalNum ));
+					if(bRecognize) {
+                        Matrix matrix = DenseMatrix.Factory.importFromArray( CHData );
+						matrixCHData = matrixCHData.appendHorizontally( Calculation.Ret.LINK, matrix.times( A ) );
+//						Log.e(TAG, "matrixCHData/matrix长度："+matrixCHData.getRowCount()+"/"+
+//												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
+					}
 
-//					new Thread(new Runnable() {
-//						@Override
-//						public void run() {
-//							mylinechart.refreshLineChart(readBuf,bufLen,BYTES_PER_ROW);
-//						}
-//					}).start();
 					long lend = System.currentTimeMillis();
 					Log.d(TAG_D, "Time span"+(lend - lbegin)/1000.0);
 					mylinechart.refreshLineChart(readBuf,bufLen,BYTES_PER_ROW);
@@ -739,6 +723,7 @@ public class BluetoothPlot extends Activity {
 	// 开始采集数据用来识别。
 	private void 	acquData(){
 		matrixCHData = DenseMatrix.Factory.emptyMatrix();
+		bRecognize = true;
 		bFreeseDisp = false;
 		String string = "V1(mv):"+  "\n" +
 				"V2(mv):"+  "\n" +
@@ -757,6 +742,11 @@ public class BluetoothPlot extends Activity {
 		double[] PeakValues;
 		double[] CharacterValues = new double[ 4 ];
 
+		if(m*n == 0)
+		{
+			Toast.makeText(BluetoothPlot.this,"未采集到数据，请重试。",Toast.LENGTH_LONG).show();
+			return;
+		}
 		CHData = matrixCHData.toDoubleArray();
 		FilterData = DSP.FIRFilter(CHData);
 		PeakValues = DSP.PeakValue( FilterData, 100 );// 以各信号的四个特征值为行，组成特征值矩阵。
@@ -774,7 +764,8 @@ public class BluetoothPlot extends Activity {
 		lineChart.getDescription().setText(string);
 		lineChart.getDescription().setTextColor(Color.rgb(255,255,255));
 
-		bFreeseDisp = true;
+//		bFreeseDisp = true;
+		bRecognize = false;
 	}
 
 

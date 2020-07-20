@@ -96,6 +96,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
+                android:enabled="false"
                 android:splitTrack="false"
                 android:switchMinWidth="20dp"
                 android:textOff="@string/ds_mechine"
@@ -126,10 +127,9 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/butto"
                 android:gravity="center"
                 android:text="识别结果"
-                android:textColor="@color/layout2"
+                android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>

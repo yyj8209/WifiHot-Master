@@ -1,7 +1,7 @@
-#Sun Jul 19 23:48:00 CST 2020
-base.0=E\:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
+#Mon Jul 20 19:20:10 CST 2020
+base.0=E\:\\AndroidProject\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\out\\classes.dex
 path.1=classes.dex
 renamed.1=classes2.dex
 path.0=classes.dex
 renamed.0=classes.dex
-base.1=E\:\\GitHub\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex
+base.1=E\:\\AndroidProject\\WifiHot-Master\\BtClient\\myBluetooth\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\out\\classes.dex
