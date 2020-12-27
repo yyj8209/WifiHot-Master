@@ -16,6 +16,7 @@
 
 package com.wayful.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,12 +25,16 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -155,7 +160,11 @@ public class BluetoothPlot extends Activity {
 	private String port = "0";
 	private long lbegin = System.currentTimeMillis();
 
-
+	// Storage Permissions
+	private static final int REQUEST_EXTERNAL_STORAGE = 1001;
+	private static String[] PERMISSIONS_STORAGE = {
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE };
 	@Override
  	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -167,6 +176,9 @@ public class BluetoothPlot extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);    // 设置全屏模式
 		setContentView(R.layout.activity_bluetooth_plot_layout);
+
+		checkWritePermission();
+
 //		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
 //		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
@@ -227,9 +239,9 @@ public class BluetoothPlot extends Activity {
 			@Override
 			public void onClick(View v) {
 				strStartStop = start_stop.getText().toString();
-				if(strStartStop.contains( "开始" )){
+				if(strStartStop.contains( "采集" )){
 					start_stop.setText( getResources().getString( R.string.reco_data ) );
-					reco_res.setText( "等待点击<查看结果>");
+					reco_res.setText( "请点击"+getResources().getString( R.string.reco_data ) );
 					acquData();
 					start_stop.setBackgroundColor(Color.rgb( 248,238,228 ));
 				}
@@ -255,6 +267,46 @@ public class BluetoothPlot extends Activity {
 	public void settings(){
 		Intent settingsIntent = new Intent( BluetoothPlot.this,BluetoothChat.class );
 		startActivity( settingsIntent );
+	}
+	/**
+	 * 申请权限
+	 */
+	private void requestWriteSettings()
+	{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+		{
+			//大于等于23 请求权限
+			if ( !Settings.System.canWrite(getApplicationContext()))
+			{
+				Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+				intent.setData(Uri.parse("package:" + getPackageName()));
+				startActivityForResult(intent, REQUEST_EXTERNAL_STORAGE );
+			}
+		}else{
+			//小于23直接设置
+		}
+	}
+
+	public void checkWritePermission() {
+		boolean isGranted = true;
+		if (android.os.Build.VERSION.SDK_INT >= 23) {
+			if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				//如果没有写sd卡权限
+				isGranted = false;
+			}
+			if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				isGranted = false;
+			}
+			Log.i("cbs","isGranted == "+isGranted);
+			if (!isGranted) {
+				this.requestPermissions(
+						new String[]{
+								Manifest.permission.READ_EXTERNAL_STORAGE,
+								Manifest.permission.WRITE_EXTERNAL_STORAGE},
+						102);
+			}
+		}
+
 	}
 
 	private void initUI(){
@@ -600,6 +652,8 @@ public class BluetoothPlot extends Activity {
 						matrixCHData = matrixCHData.appendHorizontally( Calculation.Ret.LINK, matrix.times( A ) );
 //						Log.e(TAG, "matrixCHData/matrix长度："+matrixCHData.getRowCount()+"/"+
 //												matrixCHData.getColumnCount()+"/"+matrix.getColumnCount());
+						String readMessage = Data_syn.bytesToHexString(readBuf, msg.arg1);
+						fmsg += readMessage;
 					}
 
 					long lend = System.currentTimeMillis();
@@ -669,60 +723,96 @@ public class BluetoothPlot extends Activity {
 
 	// 保存功能实现
 	private void Save() {
+		Date rightNow = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+		filename = dateFormat.format(rightNow); // 得到文件名
+
+		try {
+			if (Environment.getExternalStorageDirectory()
+					.equals(Environment.getExternalStorageDirectory())) { // 如果SD卡已准备好
+
+				filename = filename + ".txt"; // 在文件名末尾加上.txt
+				File sdDownDir = Environment
+						.getExternalStorageDirectory(); // 得到SD卡根目录
+				File BuildDir = new File(sdDownDir,
+						"/ScanDataSave"); // 打开BluetoothSave目录，如不存在则生成 。 /storage/emulated/0/ScanDataSave
+				if (BuildDir.exists() == false)
+					BuildDir.mkdirs();
+				File saveFile = new File(BuildDir, filename); // 新建文件句柄，如已存在仍新建文档
+//				matrixCHData.save(saveFile);
+				FileOutputStream stream = new FileOutputStream(saveFile); // 打开文件输入流
+				stream.write(fmsg.getBytes());
+				stream.close();
+				Toast.makeText(BluetoothPlot.this,
+						"保存到 "+saveFile.getPath(), Toast.LENGTH_LONG)
+						.show();
+			} else {
+				Toast.makeText(BluetoothPlot.this,
+						"保存失败！", Toast.LENGTH_LONG)
+						.show();
+			}
+		} catch (IOException e) {
+			return;
+		}
 		// 显示对话框输入文件名
-		LayoutInflater factory = LayoutInflater.from(BluetoothPlot.this); // 图层模板生成器句柄
-		final View DialogView = factory.inflate(R.layout.sname, null); // 用sname.xml模板生成视图模板
-		new AlertDialog.Builder(BluetoothPlot.this).setTitle("文件名")
-				.setView(DialogView) // 设置视图模板
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() // 确定按键响应函数
-						{
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
-								EditText text1 = (EditText) DialogView
-										.findViewById(R.id.sname); // 得到文件名输入框句柄
-								filename = text1.getText().toString(); // 得到文件名
-
-								try {
-									if (Environment.getExternalStorageState()
-											.equals(Environment.MEDIA_MOUNTED)) { // 如果SD卡已准备好
-
-										filename = filename + ".txt"; // 在文件名末尾加上.txt
-										File sdCardDir = Environment
-												.getExternalStorageDirectory(); // 得到SD卡根目录
-										File BuildDir = new File(sdCardDir,
-												"/BluetoothSave"); // 打开BluetoothSave目录，如不存在则生成
-										if (BuildDir.exists() == false)
-											BuildDir.mkdirs();
-										File saveFile = new File(BuildDir,
-												filename); // 新建文件句柄，如已存在仍新建文档
-										FileOutputStream stream = new FileOutputStream(
-												saveFile); // 打开文件输入流
-										stream.write(fmsg.getBytes());
-										stream.close();
-										Toast.makeText(BluetoothPlot.this,
-												"存储成功！", Toast.LENGTH_SHORT)
-												.show();
-									} else {
-										Toast.makeText(BluetoothPlot.this,
-												"没有存储卡！", Toast.LENGTH_LONG)
-												.show();
-									}
-								} catch (IOException e) {
-									return;
-								}
-							}
-						})
-				.setNegativeButton("取消", // 取消按键响应函数,直接退出对话框不做任何处理
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-							}
-						}).show(); // 显示对话框
+//		LayoutInflater factory = LayoutInflater.from(BluetoothPlot.this); // 图层模板生成器句柄
+//		final View DialogView = factory.inflate(R.layout.sname, null); // 用sname.xml模板生成视图模板
+//		new AlertDialog.Builder(BluetoothPlot.this).setTitle("保存数据")
+//				.setView(DialogView) // 设置视图模板
+//				.setPositiveButton("确定", new DialogInterface.OnClickListener() // 确定按键响应函数
+//						{
+//							public void onClick(DialogInterface dialog,
+//									int whichButton) {
+//								EditText text1 = (EditText) DialogView
+//										.findViewById(R.id.sname); // 得到文件名输入框句柄
+//								Date rightNow = new Date();
+//								SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
+//								text1.setText(dateFormat.format(rightNow));
+//								filename = text1.getText().toString(); // 得到文件名
+//
+//								try {
+//									if (Environment.getExternalStorageDirectory()
+//											.equals(Environment.getExternalStorageDirectory())) { // 如果SD卡已准备好
+//
+//										filename = filename + ".txt"; // 在文件名末尾加上.txt
+//										File sdDownDir = Environment
+//												.getExternalStorageDirectory(); // 得到SD卡根目录
+//										File BuildDir = new File(sdDownDir,
+//												"/ScanDataSave"); // 打开BluetoothSave目录，如不存在则生成 。 /storage/emulated/0/ScanDataSave
+//										if (BuildDir.exists() == false)
+//											BuildDir.mkdirs();
+//										File saveFile = new File(BuildDir,
+//												filename); // 新建文件句柄，如已存在仍新建文档
+////										matrixCHData.save(saveFile);
+//										FileOutputStream stream = new FileOutputStream(
+//												saveFile); // 打开文件输入流
+//										stream.write(fmsg.getBytes());
+//										stream.close();
+//										Toast.makeText(BluetoothPlot.this,
+//												"保存成功！", Toast.LENGTH_SHORT)
+//												.show();
+//									} else {
+//										Toast.makeText(BluetoothPlot.this,
+//												"保存失败！", Toast.LENGTH_LONG)
+//												.show();
+//									}
+//								} catch (IOException e) {
+//									return;
+//								}
+//							}
+//						})
+//				.setNegativeButton("取消", // 取消按键响应函数,直接退出对话框不做任何处理
+//						new DialogInterface.OnClickListener() {
+//							public void onClick(DialogInterface dialog,
+//									int which) {
+//							}
+//						}).show(); // 显示对话框
 	}
 
 	// 开始采集数据用来识别。
 	private void 	acquData(){
-		matrixCHData = DenseMatrix.Factory.emptyMatrix();
+		matrixCHData = DenseMatrix.Factory.emptyMatrix();   // 清空数据保存缓冲
+		fmsg = "";     // 清空数据保存缓冲。
 		bRecognize = true;
 		bFreeseDisp = false;
 		String string = "V1(mv):"+  "\n" +
@@ -735,9 +825,12 @@ public class BluetoothPlot extends Activity {
 	}
 	// 得出识别结果。
 	private void 	recoData(){
+//		bFreeseDisp = true;
+		bRecognize = false;
+		final float [][]SaveData = matrixCHData.toFloatArray();
+
 		int m = new Double(matrixCHData.getRowCount()).intValue();
 		int n = new Double( matrixCHData.getColumnCount() ).intValue();
-		double[][] CHData;
 		double[][] FilterData;
 		double[] PeakValues;
 		double[] CharacterValues = new double[ 4 ];
@@ -747,8 +840,7 @@ public class BluetoothPlot extends Activity {
 			Toast.makeText(BluetoothPlot.this,"未采集到数据，请重试。",Toast.LENGTH_LONG).show();
 			return;
 		}
-		CHData = matrixCHData.toDoubleArray();
-		FilterData = DSP.FIRFilter(CHData);
+		FilterData = DSP.FIRFilter(matrixCHData.toDoubleArray());
 		PeakValues = DSP.PeakValue( FilterData, 100 );// 以各信号的四个特征值为行，组成特征值矩阵。
 		for(int j = 0; j < 3; j++)
 			CharacterValues[j] = PeakValues[j];
@@ -764,8 +856,9 @@ public class BluetoothPlot extends Activity {
 		lineChart.getDescription().setText(string);
 		lineChart.getDescription().setTextColor(Color.rgb(255,255,255));
 
-//		bFreeseDisp = true;
-		bRecognize = false;
+		Save();
+//		matrixCHData.;     // 清空数据保存缓冲。
+
 	}
 
 

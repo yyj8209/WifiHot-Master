@@ -54,8 +54,8 @@
     <string name="discoverable1">连接监控端</string><!--原为本机可见-->
     <string name="search">连接探扫器</string><!--原为搜索设备-->
     <string name="realtime_reco">实时识别</string>
-    <string name="acqu_data">开始识别</string>
-    <string name="reco_data">查看结果</string>
+    <string name="acqu_data">采集数据</string>
+    <string name="reco_data">识别保存</string>
     <string name="check">检错模式</string>
     <string name="errorma">误比特率:</string>
     <string name="ex">%</string>

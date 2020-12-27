@@ -22,10 +22,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -127,6 +130,7 @@ public class BluetoothChat extends Activity {
 		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
 				R.layout.custom_title);
 
+//		requestWriteSettings();
 		//布局控件初始化函数，注册相关监听器
 		init();
 
@@ -165,6 +169,7 @@ public class BluetoothChat extends Activity {
 			}
 		} );
 	}
+
 
 	public void search(){
 		Intent serverIntent = new Intent(BluetoothChat.this,
